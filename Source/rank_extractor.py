@@ -3,7 +3,7 @@ import csv
 from numpy import matrix
 
 
-def table_creator(input_folder,ouput_p,leng=55) :
+def table_creator(input_folder,ouput_p,leng=55,discard_metadata =False) :
 	
 	files = listdir(input_folder)
 	# print files
@@ -26,22 +26,25 @@ def table_creator(input_folder,ouput_p,leng=55) :
 		r = list(csv.reader(i))
 		i.close()
 
-		meta = r[0][0].split()
-		del meta[0:2]
+		meta = []
 
-		meta.append(meta[1])
-		del meta[1]
+		if not discard_metadata :
+			meta = r[0][0].split()
+			del meta[0:2]
 
-		if len(meta) == 2 :
-			meta.insert(0,"0.05")
+			meta.append(meta[1])
+			del meta[1]
 
-		# print meta
-		#-------------blb
-		meta[0] = float(meta[0])
-		meta[1] = int(meta[1])
-		meta[2] = int(meta[2])
-		#---------------- blb
-		# print meta
+			if len(meta) == 2 :
+				meta.insert(0,"0.05")
+
+			# print meta
+			#-------------blb
+			meta[0] = float(meta[0])
+			meta[1] = int(meta[1])
+			meta[2] = int(meta[2])
+			#---------------- blb
+			# print meta
 
 
 		del r [0:2]
@@ -54,7 +57,9 @@ def table_creator(input_folder,ouput_p,leng=55) :
 		row_list.append(row)
 
 
-	row_list =sorted(row_list,cmp=sorter)
+	
+	if not discard_metadata :
+		row_list =sorted(row_list,cmp=sorter)
 
 	o = open(ouput_p,"w")
 	ocsv = csv.writer(o,lineterminator="\n",delimiter=",")
@@ -82,4 +87,4 @@ def sorter(a,b) :
 
 
 if __name__ == '__main__':
-	table_creator("../../data/FOS","../input/fos__55_freqrel.csv")
+	table_creator("../../data/GadW/expansion","../input/GadW_55__.csv",discard_metadata=True)

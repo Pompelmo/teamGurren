@@ -3,7 +3,6 @@
 #################################################
 library("markovchain")
 library("hash")
-# source("/Users/Kate/Desktop/Laboratory of Biological Data Mining/FunctionV3.R") 
 
 ##------------------------
 ## Precision computator
@@ -308,9 +307,9 @@ bba_par_ranker <- function(dataframe,col_discarded=0,k_max=ncol(dataframe) - col
 bba.b <-  function(i,max,min, U,l) {
   if (U[i] %in% keys(l)) {
     p <- ((max-(as.numeric(as.character(values(l,as.character(U[i])))) -min))/max)
-    i <- 1-((max-(as.numeric(values(l,as.character(U[i])))-min))/max)  
+    i <- 1- ((max-(as.numeric(as.character(values(l,as.character(U[i])))) -min))/max)  
     return(c(p,0,i))}
-  else{
+   else{
     return(c(0,0,1))
   }
 }

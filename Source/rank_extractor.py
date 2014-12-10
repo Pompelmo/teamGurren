@@ -82,4 +82,4 @@ def sorter(a,b) :
 
 
 if __name__ == '__main__':
-	table_creator("./caterina_fos","./fos_55_rank.csv")
+	table_creator("../../data/FOS","../input/fos__55_freqrel.csv")

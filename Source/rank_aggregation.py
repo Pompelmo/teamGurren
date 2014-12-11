@@ -18,9 +18,25 @@ class Rank_aggregator:
 	"""Rank_aggregator object"""
 
 	#---------------------------------- inizialization of class R environment and loading of R functions
+
+	silent = open(os.devnull, 'w') #start silencing stdout (becouse of R prints something)
+	normal = sys.stdout
+	sys.stdout =silent
+
+	print "ciao"
 	base= importr("base")
+	stats = importr("stats")
 	robjects.r('source("Funzioni_2.0.R")')
 	R = robjects.globalenv
+	#----------------------------------- R function for bba_par
+	mean = base.mean
+	minimum = base.min
+	median = stats.median
+	mc4 = "MC4"
+
+	sys.stdout = normal #finish silencing stdout
+	silent.close()
+ 
 	#--------------------------------------- costructor
 	def __init__(self, data=None,col_metadata=None,data_header=False,classes=None,classes_header=False,k_max=None):
 
@@ -29,7 +45,7 @@ class Rank_aggregator:
 		# self.data = None
 		self.Rdata = None
 		self.col_metadata = 0
-		self.kmax = None
+		self.k_max = None
 		# self.classes = None
 		self.Rclasses = None
 		self.last_rank = None
@@ -218,16 +234,23 @@ class Rank_aggregator:
 
 	#------------------------------------------------ ranking functions
 
-	def bba_par_ranker(self,N_ite=1,estimator="mean") :
+	def bba_par_ranker(self,N_ite=1,estimator=mean) :
 
-		silent = open(os.devnull, 'w')
+		is_mc4 = False
+		if estimator == Rank_aggregator.mc4 :
+			is_mc4 = True
+
+		silent = open(os.devnull, 'w') #start silencing stdout (becouse of R prints something)
 		normal = sys.stdout
 
 		sys.stdout =silent
 		#--------------------------- calling the bba_par_ranker R function
-		rank = Rank_aggregator.R["bba_par_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),Nite=N_ite)
+		rank = Rank_aggregator.R["bba_par_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),Nite=N_ite,est=estimator,MC4=is_mc4)
 
 		sys.stdout = normal
+		silent.close() # finishing silencing stduot
+
+
 		#----------------------------- setting the rank
 		self.last_rank = rank	
 		#--------------------------- returning a list
@@ -352,9 +375,11 @@ def main():
 
 
 def testing() :
-	mat =[[1,2],["10","ciao"]]
-	print mat
-	r = Rank_aggregator(data="bigTable.csv",k_max="55",col_metadata="3")
+	mat =[ ["human", "dolphin", "cat", "mouse"],
+                ["monkey","dolphin", "dog","mouse"],
+                ["human","wolf","cat","dog"] ]
+	# print mat
+	r = Rank_aggregator(data=mat,k_max=4)
 
 	# print r.get_k_max()
 	# print r.get_dataframe_rank()
@@ -363,11 +388,13 @@ def testing() :
 	# print row
 	# print Rank_aggregator.list_from_dataframe(row)
 
-	print r.bba_par_ranker()
-	# print r.random_ranker()
-	# print r.no_of_app_ranker()
-	# print r.borda_count_ranker()
-	# print r.mc4_ranker()
+	print "bba  ",r.bba_par_ranker()
+	print "bba mc4 ",r.bba_par_ranker(estimator=Rank_aggregator.minimum)
+	print "rand  ",r.random_ranker()
+	print "nofap  ",r.no_of_app_ranker()
+	print "borda  ",r.borda_count_ranker()
+	print "mc4 ",r.mc4_ranker()
+	
 	# print r.precision_computator()
 	
 

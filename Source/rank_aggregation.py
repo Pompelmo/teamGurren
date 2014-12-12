@@ -337,37 +337,29 @@ class Rank_aggregator:
 
 
 def main():
-	robjects.r('source("Rank_aggregation_KL.R")')
 
-	# robjects.r('''bre <- function(dataframe,Nite=1,kmax=55,est=funct){
+	r = Rank_aggregator(data="../input/GadW_55__.csv",k_max=55)
 
+	res = r.mc4_ranker()[0:100]
 
+	print r.get_dataframe_rank()
 
-	# 	return(vector("numeric",length=4))
-	# }''')
+	# print Rank_aggregator.list_from_dataframe((r.get_dataframe_rank()))[0]
 
+	# print res 
 
-	bba_par_ranker =robjects.globalenv['bba_par_ranker']
-	# first = robjects.globalenv['first']
-	base= importr("base")
-	# as_vector = robjects.globalenv['as.vector']
-
-	df = robjects.vectors.DataFrame.from_csvfile("bigTable.csv",header=False)
-
-	bba = bba_par_ranker(df,col_discarded=3)
-	# print type(first(bba))
-	# print list(first(bba))
-
-	# print type(base.as_vector(bba[0]))
-	# print list(base.as_vector(bba[0]))
-	# print df
+	res = [list(i) for i in zip(*res)][0]
 
 
-	aaa= base.data_frame(robjects.StrVector(["a","b"]))
-	base.rbind(aaa,robjects.StrVector(["a","b"]))
-	print aaa
 
 
+	o = open("../gadW_aggregated_100.csv","w")
+
+	import csv
+
+	oc = csv.writer(o,lineterminator="\n")
+
+	oc.writerow(res)
 
 
 
@@ -379,14 +371,8 @@ def testing() :
                 ["monkey","dolphin", "dog","mouse"],
                 ["human","wolf","cat","dog"] ]
 	# print mat
-	r = Rank_aggregator(data=mat,k_max=4)
+	r = Rank_aggregator(data=mat,k_max=3)
 
-	# print r.get_k_max()
-	# print r.get_dataframe_rank()
-	# row =r.get_dataframe_rank()
-
-	# print row
-	# print Rank_aggregator.list_from_dataframe(row)
 
 	print "bba  ",r.bba_par_ranker()
 	print "bba mc4 ",r.bba_par_ranker(estimator=Rank_aggregator.minimum)
@@ -399,9 +385,7 @@ def testing() :
 	
 
 if __name__ == '__main__':
-	# print dataframe_form_csv("bigTable.csv")
-	# main()
-	# print r.get_dataframe_classes() 
+	main()
 
 
-	testing()
+	# testing()

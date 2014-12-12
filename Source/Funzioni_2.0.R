@@ -144,7 +144,7 @@ borda_count_ranker <- function(dataframe,col_discarded=0,k_max=ncol(dataframe) -
 ## MC4: da script del dott. Argentini
 ##-----------------------------------------------
 
-mc4_ranker  <-  function(dataframe,col_discarded=0,k_max=ncol(dataframe) - col_discarded, alpha=0.05, GeneRank=FALSE){
+mc4_ranker  <-  function(dataframe,col_discarded=0,k_max=ncol(dataframe) - col_discarded, alpha=0.05){
   dfl <- nrow(dataframe)
   x <- y <- vector("character")       
   for(j in 1:k_max){                 

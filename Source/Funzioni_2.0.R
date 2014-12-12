@@ -206,7 +206,7 @@ mc4_ranker  <-  function(dataframe,col_discarded=0,k_max=ncol(dataframe) - col_d
   a=alpha
   t_p_mat_t = ((1-a)*t_pro_mat ) + a/yy
   MC4 <- new("markovchain", states = y, transitionMatrix = t_p_mat_t, name = "rank_aggr")
-  result <- data.frame(key=y, rank=rank(steadyStates(MC4)))  
+  result <- data.frame(key=y, rank=rank(round(steadyStates(MC4),digits=10),ties.method="average"))  
   result=result[order(result$rank),]
   row.names(result) <- NULL
   return(result)

@@ -23,7 +23,6 @@ class Rank_aggregator:
 	normal = sys.stdout
 	sys.stdout =silent
 
-	# print "ciao"
 	base= importr("base")
 	stats = importr("stats")
 	robjects.r('source("Funzioni_2.0.R")')
@@ -38,7 +37,7 @@ class Rank_aggregator:
 	silent.close()
  
 	#--------------------------------------- costructor
-	def __init__(self, data=None,col_metadata=None,data_header=False,classes=None,classes_header=False,k_max=None):
+	def __init__(self, data=None,col_metadata=0,data_header=False,classes=None,classes_header=False,k_max=None):
 
 
 		#----------------------------------- creation of class variables
@@ -336,33 +335,6 @@ class Rank_aggregator:
 
 
 
-def main():
-
-	r = Rank_aggregator(data="../input/GadW_55__.csv",k_max=55)
-
-	res = r.no_of_app_ranker()
-
-	print res
-
-	# print r.get_dataframe_rank()
-
-	# print Rank_aggregator.list_from_dataframe((r.get_dataframe_rank()))[0]
-
-	# print res 
-
-	# res = [list(i) for i in zip(*res)][0]
-
-
-
-
-	# o = open("../gadW_aggregated_100.csv","w")
-
-	# import csv
-
-	# oc = csv.writer(o,lineterminator="\n")
-
-	# oc.writerow(res)
-
 
 
 
@@ -387,7 +359,5 @@ def testing() :
 	
 
 if __name__ == '__main__':
-	main()
-
-
+	pass
 	# testing()

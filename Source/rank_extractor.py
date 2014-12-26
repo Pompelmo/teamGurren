@@ -143,5 +143,6 @@ def sorter(a,b) :
 
 
 if __name__ == '__main__':
+	pass
 	# rl = extractor("../../data/GadW/expansion",leng=55,discard_metadata=True)
 	# table_creator(rl,"../input/GadW_55__.csv")

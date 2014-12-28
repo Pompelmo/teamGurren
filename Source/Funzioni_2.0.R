@@ -87,10 +87,11 @@ no_of_app_ranker <- function(dataframe, col_discarded=0,k_max=(ncol(dataframe) -
   AA <- as.data.frame(cbind(y,z))        
   AB <- AA[order(-z),]
   row.names(AB) <- NULL
+  a <- 120 - as.numeric(as.character(AB$z))
+  AAB <- data.frame(unique.probes = as.character(AB$y), rank = rank(a, ties.method="average"))
    
-  return(AB)
+  return(AAB)
 }
-
 
 ##-----------------------------------------------
 ## Borda Count: statistiche varie
@@ -135,9 +136,10 @@ borda_count_ranker <- function(dataframe,col_discarded=0,k_max=ncol(dataframe) -
   AA <- as.data.frame(cbind(y,w))
   row.names(AA) <- NULL
   AB <- AA[order(w),]  
-  row.names(AB) <- NULL
- 
-  return(AB)
+  row.names(AB) <- NULL  
+  a <- as.numeric(as.character(AB$w))
+  AAB <- data.frame(unique.probes = as.character(AB$y), rank = rank(a, ties.method="average")) 
+  return(AAB)
 }
 
 ##-----------------------------------------------

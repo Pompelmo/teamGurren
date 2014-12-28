@@ -31,7 +31,7 @@ precision_computator <- function(dataframe_rank, dataframe_classes, k_firsts=nro
     k_min <- min(k)-1
     n <- (length(which(Data$y.class[k]=="Class 1")) + length(which(Data$y.class[k]=="Class 2")))/length(k)
     a <- (length(which(Data$y.class[1:k_min]=="Class 1")) + 
-            length(which(Data$y.class[1:k_min]=="Class 2"))+n)/k_firsts 
+            length(which(Data$y.class[1:k_min]=="Class 2"))+n*(k_first - k_min))/k_firsts 
   }  else{
   a <- (length(which(Data$y.class[1:k_firsts]=="Class 1")) + 
           length(which(Data$y.class[1:k_firsts]=="Class 2")))/k_firsts 

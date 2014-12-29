@@ -235,6 +235,9 @@ class Rank_aggregator:
 
 	def bba_par_ranker(self,N_ite=1,estimator=mean) :
 
+		if estimator not in set([Rank_aggregator.mean,Rank_aggregator.minimum,Rank_aggregator.median,Rank_aggregator.mc4]) :
+			raise ValueError("estimator passed isn't supported")
+
 		is_mc4 = False
 		if estimator == Rank_aggregator.mc4 :
 			is_mc4 = True
@@ -283,12 +286,13 @@ class Rank_aggregator:
 		#--------------------------- returning a list
 		return Rank_aggregator.list_from_dataframe(rank)
 
-	def borda_count_ranker(self) :
+	def borda_count_ranker(self,estimator=mean) :
 
-
+		if estimator not in set([Rank_aggregator.mean,Rank_aggregator.minimum,Rank_aggregator.median]) :
+			raise ValueError("estimator passed isn't supported")
 
 		#--------------------------- calling the borda_count_ranker R function
-		rank = Rank_aggregator.R["borda_count_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata())
+		rank = Rank_aggregator.R["borda_count_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),est=estimator)
 
 
 		#----------------------------- setting the rank
@@ -349,7 +353,7 @@ def testing() :
 
 
 	print "bba  ",r.bba_par_ranker()
-	print "bba mc4 ",r.bba_par_ranker(estimator=Rank_aggregator.minimum)
+	# print "bba mc4 ",r.bba_par_ranker(estimator=19)
 	print "rand  ",r.random_ranker()
 	print "nofap  ",r.no_of_app_ranker()
 	print "borda  ",r.borda_count_ranker()
@@ -360,4 +364,4 @@ def testing() :
 
 if __name__ == '__main__':
 	pass
-	# testing()
+	testing()

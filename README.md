@@ -7,4 +7,4 @@ The fabulous folder of all the stuffs regarding ranking aggregation linked to th
 DOCUMENTATION
 ================
 
-all the Python documentation is in the folder pydoc/source/_build/html, please refer to it 
+all the Python documentation is in the folder pydoc_source/ _build/html, please refer to it 

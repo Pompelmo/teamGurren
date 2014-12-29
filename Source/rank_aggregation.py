@@ -111,7 +111,7 @@ class Rank_aggregator:
 		for i in range(0,data_frame.ncol) :
 			l.append(list(Rank_aggregator.base.as_vector(data_frame[i])))
 
-		return [list(i) for i in zip(*l)] #return the transposed matrix
+		return [tuple(i) for i in zip(*l)] #return the transposed matrix
 
 	@staticmethod
 	def Rmatrix(data) : 
@@ -211,7 +211,7 @@ class Rank_aggregator:
 	def get_aggregated_rank(self) :
 		if self.last_rank == None :
 			raise ValueError("no aggregated rank in this istance of Rank_aggregator")
-		return self.last_rank
+		return self.list_from_dataframe(self.last_rank)
 
 	def set_aggregated_rank(self,rank) :
 
@@ -353,15 +353,16 @@ def testing() :
 
 
 	print "bba  ",r.bba_par_ranker()
-	# print "bba mc4 ",r.bba_par_ranker(estimator=19)
+	print "bba mc4 ",r.bba_par_ranker(estimator=Rank_aggregator.mc4)
 	print "rand  ",r.random_ranker()
 	print "nofap  ",r.no_of_app_ranker()
 	print "borda  ",r.borda_count_ranker()
 	print "mc4 ",r.mc4_ranker()
+	print r.get_aggregated_rank()
 	
 	# print r.precision_computator()
 	
 
 if __name__ == '__main__':
 	pass
-	testing()
+	# testing()

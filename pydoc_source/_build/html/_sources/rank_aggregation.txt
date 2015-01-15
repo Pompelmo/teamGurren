@@ -9,7 +9,7 @@
 This module offers a structured way to aggregate rankings in several different
 ways. It can be used to process all types of rankings.
 The real implementation of a part of these functions is made in R, but this is 
-hidden to the user thanks to some linkage libraries, ruquired from this module
+hidden to the user thanks to some linkage libraries, required by this module
 and described in the next section.
 
 
@@ -42,7 +42,7 @@ open your python interpreter and type
 
 .. code-block :: python
 
-  >>> from rank_aggregation import Rank_aggergator #you must be in the same folder 
+  >>> from rank_aggregation import Rank_aggergator 
   >>> from rpy2.robjects.packages import importr
   >>> h = importr("hash")
   >>> m = importr("markovchain")
@@ -86,13 +86,13 @@ Class and funcions
 	*col_metadata* is an integer representing the number of columns that has to be discarded from data starting
 	from the first 
 	*data_header* is a boolean flag that , if it is set to True the first row of data will be discarded. 
-	*k_max* is the len of the final aggregated rank, the default value is the len of one single rank
+	*k_max* is the len of the ranks to be aggregated
 
 	Rank_aggregator's instances provide the following methods:
 
 .. method:: Rank_aggregator.set_dataframe_rank(data,data_header=False)
 
-		Set the list of rank that has to be aggregated from *data*, *data_header* is a flag that if true says 
+		Set the list of ranks that has to be aggregated from *data*, *data_header* is a flag that if true says 
 		that the first row is the header. data can be also a .csv file with a rank for every row (so the column are
     the positions)
 
@@ -157,8 +157,9 @@ Now an example of using these methods to create a working instance of Rank_aggre
 
 Now will follow the description of the ranking methods implemented in *Rank_aggregator*, These require that 
 the instance used is already set with all the data descried in the previous example. All the methods now described returns a 
-list of 2 lists. the first is the aggregated rank, the second is the position of every element in the rank. If there are 
-tails the position will be the mean
+list of tuples. the first element of every tuple is an element of the the aggregated rank, 
+the second is the position of the  element in the rank. 
+If there are tails the position will be the mean
 
 .. method:: Rank_aggregator.no_of_app_ranker()
 
@@ -179,7 +180,7 @@ tails the position will be the mean
 
 .. method:: Rank_aggregator.mc4_ranker(alpha=0.05)
     
-    Aggregate the ranks usaing the mc4 method, *alpha* is the preciosion measure 
+    Aggregate the ranks usaing the mc4 method, *alpha* is the significance level. 
     Returns a list where the first elem is a the aggregated list and the second is the position.
 
 .. method:: Rank_aggregator.bba_par_ranker(N_ite=1,estimator=Rank_aggregator.mean)
@@ -211,7 +212,7 @@ The avaible estimator functions for :func:`bba_par_ranker` and :func:`borda_coun
 
   #this example is a continuum of the previous one
 
-  a = r.borda_count_ranker(estimator = Rank_aggregation.mean) #use the borda count woth the mean
+  a = r.borda_count_ranker(estimator = Rank_aggregation.mean) #use the borda count with the mean
   b = r.mc4_ranker() #use the mc4
 
   m = r.bba_par_ranker(N_ite = 2,estimator = Rank_aggregation.mean) #use bba_par with mean estimator

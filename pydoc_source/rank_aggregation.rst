@@ -180,7 +180,7 @@ If there are tails the position will be the mean
 
 .. method:: Rank_aggregator.mc4_ranker(alpha=0.05)
     
-    Aggregate the ranks usaing the mc4 method, *alpha* is the precision measure 
+    Aggregate the ranks usaing the mc4 method, *alpha* is the significance level. 
     Returns a list where the first elem is a the aggregated list and the second is the position.
 
 .. method:: Rank_aggregator.bba_par_ranker(N_ite=1,estimator=Rank_aggregator.mean)

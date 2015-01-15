@@ -1,7 +1,7 @@
 # from numpy import matrix
 
 
-__version__ = '0.2'
+__version__ = '0.2.1'
 
 import os
 import sys

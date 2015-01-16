@@ -5,6 +5,8 @@ __version__ = '0.2.1'
 
 import os
 import sys
+import csv
+import argparse as ap
 
 #--------------------------------- rpy2 imports
 import rpy2.robjects as robjects
@@ -37,26 +39,22 @@ class Rank_aggregator:
 	silent.close()
  
 	#--------------------------------------- costructor
-	def __init__(self, data=None,col_metadata=0,data_header=False,classes=None,classes_header=False,k_max=None):
+	# def __init__(self, data=None,col_metadata=0,data_header=False,classes=None,classes_header=False,k_max=None):
+	def __init__(self, data=None,col_metadata=0,data_header=False,k_max=None):
 
 
 		#----------------------------------- creation of class variables
-		# self.data = None
-		self.Rdata = None
+		self.data = None #data as a list of lists
+		self.Rdata = None # data as a dataframe
 		self.col_metadata = 0
 		self.k_max = None
-		# self.classes = None
-		self.Rclasses = None
-		self.last_rank = None
+
+		self.last_rank = None # las rank computed, as list of tuples
 
 		#------------------------------------ inizialization of data
 		if data != None :
 			self.set_dataframe_rank(data,data_header)
 
-		#------------------------------------ inizialization of classes
-		if classes != None :
-
-			self.set_dataframe_classes(classes,classes_header)
 
 		#------------------------------------ inizialization of col_metadata
 		if col_metadata != None :
@@ -128,10 +126,16 @@ class Rank_aggregator:
 
 	#-----------------------------------get/set methods
 
-	def get_dataframe_rank(self) :
-		if self.Rdata == None :
-			raise ValueError("no rank data in this istance of Rank_aggregator")
-		return self.Rdata
+	def get_dataframe_rank(self,R=False) :
+
+		if R :
+			if self.Rdata == None :
+				raise ValueError("no rank data in this istance of Rank_aggregator")
+			return self.Rdata
+		else :
+			if self.data == None :
+				raise ValueError("no rank data in this istance of Rank_aggregator")
+			return self.data
 
 
 	def set_dataframe_rank(self,data,data_header=False) :
@@ -140,37 +144,20 @@ class Rank_aggregator:
 				raise IOError("'"+data+"' is not a readable file")
 
 			self.Rdata = Rank_aggregator.dataframe_from_csv(data,row_header=data_header)
+			self.data = list(csv.reader(open(data,"r"))) 
 		
-		elif type(data) == robjects.vectors.DataFrame :
-			self.Rdata = data
+		# elif type(data) == robjects.vectors.DataFrame :
+		# 	self.Rdata = data
 
 		elif hasattr(data, '__iter__'):
 			self.Rdata = Rank_aggregator.dataframe_from_list(data)
+			self.data = list(data)
 
 		else :
 			raise TypeError(type(data)+" data type not supported")
 
 
-	def get_dataframe_classes(self) :
-		if self.Rclasses == None :
-			raise ValueError("no classes data in this istance of Rank_aggregator")
-		return self.Rclasses
-
-
-	def set_dataframe_classes(self,classes,classes_header=False) :
-		if type(classes) == str :
-			if not os.path.exists(classes) :
-				raise IOError("'"+classes+"' is not a readable file")
-			self.Rclasses = Rank_aggregator.dataframe_from_csv(classes,row_header=classes_header)
 		
-		elif type(classes) == robjects.vectors.DataFrame :
-			self.Rclasses = classes
-
-		elif hasattr(classes, '__iter__'):
-			self.Rclasses = Rank_aggregator.dataframe_from_list(classes)
-
-		else :
-			raise TypeError(type(classes)+" classes type not supported")		
 
 
 	def get_k_max(self) :
@@ -211,24 +198,27 @@ class Rank_aggregator:
 	def get_aggregated_rank(self) :
 		if self.last_rank == None :
 			raise ValueError("no aggregated rank in this istance of Rank_aggregator")
-		return self.list_from_dataframe(self.last_rank)
-
-	def set_aggregated_rank(self,rank) :
-
-		if type(rank) == str :
-			if not os.path.exists(rank) :
-				raise IOError("'"+rank+"' is not a readable file")
-
-			self.last_rank = Rank_aggregator.dataframe_from_csv(rank)
-		
-		elif type(rank) == robjects.vectors.DataFrame :
-			self.last_rank = rank
-
-		elif hasattr(rank, '__iter__'):
-			self.last_rank = Rank_aggregator.dataframe_from_list(rank)
-
+		# if type(self.last_rank) !=list :
+		# 	return self.list_from_dataframe(self.last_rank)
 		else :
-			raise TypeError(type(rank)+" data type not supported")
+			return self.last_rank
+
+	# def set_aggregated_rank(self,rank) :
+
+	# 	if type(rank) == str :
+	# 		if not os.path.exists(rank) :
+	# 			raise IOError("'"+rank+"' is not a readable file")
+
+	# 		self.last_rank = Rank_aggregator.dataframe_from_csv(rank)
+		
+	# 	elif type(rank) == robjects.vectors.DataFrame :
+	# 		self.last_rank = rank
+
+	# 	elif hasattr(rank, '__iter__'):
+	# 		self.last_rank = Rank_aggregator.dataframe_from_list(rank)
+
+	# 	else :
+	# 		raise TypeError(type(rank)+" data type not supported")
 
 
 	#------------------------------------------------ ranking functions
@@ -247,44 +237,106 @@ class Rank_aggregator:
 
 		sys.stdout =silent
 		#--------------------------- calling the bba_par_ranker R function
-		rank = Rank_aggregator.R["bba_par_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),Nite=N_ite,est=estimator,MC4=is_mc4)
+		rank = Rank_aggregator.R["bba_par_ranker"](dataframe=self.get_dataframe_rank(R=True),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),Nite=N_ite,est=estimator,MC4=is_mc4)
 
 		sys.stdout = normal
 		silent.close() # finishing silencing stduot
 
 
 		#----------------------------- setting the rank
-		self.last_rank = rank	
+		self.last_rank = Rank_aggregator.list_from_dataframe(rank)	
 		#--------------------------- returning a list
-		return Rank_aggregator.list_from_dataframe(rank)
+		return self.get_aggregated_rank()
 
 
 
 	def random_ranker(self) :
 
+		#------------------- computes the random ranking by position, in Python
 
-		#--------------------------- calling the random_ranker R function
-		rank = Rank_aggregator.R["random_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata())
+		rank =self.get_dataframe_rank()
+		rank = [list(i) for i in zip(*rank)]
 
+		for i in range(0,self.get_col_metadata()) :
+			del rank[0]
+
+		l = len(rank)
+		for i in range(self.get_k_max(),l) :
+			del rank[-1]
+		
+		res = []
+		unique = set()
+
+		for i in rank :
+			s = set(i) - unique
+			res = res + list(s)
+			unique = unique | s
+
+		for i in range(0,len(res)) :
+			res[i] = (res[i],float(i+1))
 
 		#----------------------------- setting the rank
-		self.last_rank = rank	
+
+		self.last_rank = res
+
 		#--------------------------- returning a list
-		return Rank_aggregator.list_from_dataframe(rank)
+
+		return res
+
+
+
+
 
 
 	def no_of_app_ranker(self) :
 
+		#------------------------ aggregator that counts the number of appearences, in Python
 
 
-		#--------------------------- calling the no_of_app_ranker R function
-		rank = Rank_aggregator.R["no_of_app_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata())
+		rank =self.get_dataframe_rank()
+		rank = [list(i) for i in zip(*rank)]
 
+		for i in range(0,self.get_col_metadata()) :
+			del rank[0]
+
+		l = len(rank)
+
+
+		for i in range(self.get_k_max(),l) :
+			del rank[-1]
+
+		d = {}
+		for i in rank :
+			for j in i :
+				if j in d :
+					d[j] = d[j] + 1
+				else  :
+					d[j] = 1
+
+		f ={}
+
+		for k in d :
+			if d[k] in f :
+				f[d[k]].append(k)
+			else :
+				f[d[k]] = [k]
+		app = list(f.keys()) 
+		app.sort(reverse=True)
+
+		res = []
+
+		for i in app :
+			z = zip(f[i],[float(len(res)+len(f[i])/2)]*len(f[i]))
+
+			res.extend(z)
 
 		#----------------------------- setting the rank
-		self.last_rank = rank	
+		self.last_rank = res
+
 		#--------------------------- returning a list
-		return Rank_aggregator.list_from_dataframe(rank)
+
+		return res
+
 
 	def borda_count_ranker(self,estimator=mean) :
 
@@ -292,13 +344,13 @@ class Rank_aggregator:
 			raise ValueError("estimator passed isn't supported")
 
 		#--------------------------- calling the borda_count_ranker R function
-		rank = Rank_aggregator.R["borda_count_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),est=estimator)
+		rank = Rank_aggregator.R["borda_count_ranker"](dataframe=self.get_dataframe_rank(R=True),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),est=estimator)
 
 
 		#----------------------------- setting the rank
-		self.last_rank = rank	
+		self.last_rank = Rank_aggregator.list_from_dataframe(rank)	
 		#--------------------------- returning a list
-		return Rank_aggregator.list_from_dataframe(rank)
+		return self.get_aggregated_rank()
 
 
 	def mc4_ranker(self,alpha=0.05) :
@@ -310,34 +362,31 @@ class Rank_aggregator:
 			raise ValueError("alpha has to be in the range 0<alpha<=1")
 
 		#--------------------------- calling mc4_ranker R function
-		rank = Rank_aggregator.R["mc4_ranker"](dataframe=self.get_dataframe_rank(),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),alpha=a)
+		rank = Rank_aggregator.R["mc4_ranker"](dataframe=self.get_dataframe_rank(R=True),k_max=self.get_k_max(),col_discarded=self.get_col_metadata(),alpha=a)
 
 
 		#----------------------------- setting the rank
-		self.last_rank = rank	
+		self.last_rank = Rank_aggregator.list_from_dataframe(rank)	
 		#--------------------------- returning a list
-		return Rank_aggregator.list_from_dataframe(rank)
-
-
-	def precision_computator(self,rank=None,classes= None,k_firsts=None) :
-
-		if rank != None :
-			self.set_aggregated_rank(rank)
-		if classes != None :
-			self.set_dataframe_classes(classes)
-
-		kf = len(Rank_aggregator.list_from_dataframe(self.get_aggregated_rank())[0])
-		if k_firsts != None :
-			kf = int(k_firsts)
-
-	 	
-		val = Rank_aggregator.R["precision_computator"](dataframe_rank = self.get_aggregated_rank(),dataframe_classes=self.get_dataframe_classes(),k_firsts=kf)
-
-		return val
+		return self.get_aggregated_rank()
 
 
 
 
+
+
+# def parser() :
+# 	args = sys.argv
+# 	parser = ap.ArgumentParser(description='utilityes for the aggregation of rankings',formatter_class=ap.ArgumentDefaultsHelpFormatter)
+# 	arg = parser.add_argument
+# 	arg( 'inp_f', metavar='INPUT_FILE', type=str, help="the .csv with rankings")
+# 	arg( '-c','--col-metadata',metavar='col_met', type=int, default='PAM', help="the number of columns to be discarded\n")
+# 	arg( '-e','--k_max',metavar='k_max', type=int,default='SI', help="the number of first elements to use in every list \n")
+# 	arg( '-h','--data_header',metavar='DIST_F', type=bool,default='Bray-Curtis', help="the distance function that has to be used\n")
+
+
+	
+# 	a = vars(parser.parse_args())
 
 
 
@@ -355,6 +404,7 @@ def testing() :
 	print "bba  ",r.bba_par_ranker()
 	print "bba mc4 ",r.bba_par_ranker(estimator=Rank_aggregator.mc4)
 	print "rand  ",r.random_ranker()
+	print r.get_aggregated_rank()
 	print "nofap  ",r.no_of_app_ranker()
 	print "borda  ",r.borda_count_ranker()
 	print "mc4 ",r.mc4_ranker()
@@ -364,5 +414,5 @@ def testing() :
 	
 
 if __name__ == '__main__':
-	pass
 	# testing()
+	pass

@@ -28,15 +28,20 @@ precision_computator <- function(dataframe_rank, dataframe_classes, k_firsts=nro
   if(k_firsts!=nrow(dataframe_rank) && Data[k_firsts,2]==Data[(k_firsts+1),2]){
     x <- Data[k_firsts,2]
     k <- which(Data[,2]==x)
-    k_min <- min(k)-1
-    n <- (length(which(Data$y.class[k]=="Class 1")) + length(which(Data$y.class[k]=="Class 2")))/length(k)
-    a <- (length(which(Data$y.class[1:k_min]=="Class 1")) + 
-            length(which(Data$y.class[1:k_min]=="Class 2"))+n*(k_first - k_min))/k_firsts 
+      if (min(k)==1) {
+        n <- (length(which(Data$y.class[k]=="Class 1")) + length(which(Data$y.class[k]=="Class 2")))/length(k)
+          return(n*k_firsts)
+      } else {
+        n <- (length(which(Data$y.class[k]=="Class 1")) + length(which(Data$y.class[k]=="Class 2")))/length(k)
+        a <- (length(which(Data$y.class[1:k_min]=="Class 1")) + 
+                length(which(Data$y.class[1:k_min]=="Class 2"))+n*(k_firsts - k_min))/k_firsts 
+          return(a)
+      }
   }  else{
   a <- (length(which(Data$y.class[1:k_firsts]=="Class 1")) + 
           length(which(Data$y.class[1:k_firsts]=="Class 2")))/k_firsts 
-  }
   return(a)
+  }
 }
 
 
@@ -57,7 +62,7 @@ random_ranker <- function(dataframe,col_discarded=0,k_max=(ncol(dataframe) - col
   yy <- length(y)
 
   s <- sample(y,yy)
-  AA <- as.data.frame(cbind(y,1:yy))
+  AA <- as.data.frame(cbind(s,1:yy))
 
   return(AA)
 }

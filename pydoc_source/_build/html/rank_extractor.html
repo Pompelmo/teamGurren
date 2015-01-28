@@ -57,10 +57,16 @@ this module use ony the .expansion files</p>
 <dt id="extractor">
 <tt class="descname">extractor</tt><big>(</big><em>input_folder</em>, <em>leng</em><big>)</big><a class="headerlink" href="#extractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>take in input a string <em>input_folder</em> containing a path of a directory containing the output of ParserBoinc of many
-PCIM,   an integer <em>leng</em> that is the len of the ranks to extract.
+PCIM,   an integer <em>leng</em> that is the number of first elements to extract from every PC-IM.
 Return a list of ranks taken from every PCIM in the input folder.</p>
 </dd></dl>
 
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rank_extractor</span> <span class="kn">import</span> <span class="n">extractor</span>
+<span class="n">my_folder</span> <span class="o">=</span> <span class="s">&quot;./myfolder&quot;</span> <span class="c"># the folder with the data</span>
+
+<span class="n">l</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">myfolder</span><span class="p">,</span><span class="mi">55</span><span class="p">)</span> <span class="c"># extract 55 element for every PC-IM results in the folder (the ranks), and return a list of ranks</span>
+</pre></div>
+</div>
 </div>
 
 

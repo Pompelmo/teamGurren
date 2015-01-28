@@ -9,8 +9,17 @@ this module use ony the .expansion files
 .. function:: extractor(input_folder,leng)
 
 	take in input a string *input_folder* containing a path of a directory containing the output of ParserBoinc of many
-	PCIM,	an integer *leng* that is the len of the ranks to extract.
+	PCIM,	an integer *leng* that is the number of first elements to extract from every PC-IM.
 	Return a list of ranks taken from every PCIM in the input folder.
+
+
+
+.. code-block :: python
+	
+	from rank_extractor import extractor
+	my_folder = "./myfolder" # the folder with the data
+
+	l = extractor(myfolder,55) # extract 55 element for every PC-IM results in the folder (the ranks), and return a list of ranks 
 
 .. .. function:: table_creator(rank_list,ouput_p)
 

@@ -42,7 +42,7 @@ open your python interpreter and type
 
 .. code-block :: python
 
-  >>> from rank_aggregation import Rank_aggergator 
+  >>> from rank_aggregation import Rank_aggregator 
   >>> from rpy2.robjects.packages import importr
   >>> h = importr("hash")
   >>> m = importr("markovchain")

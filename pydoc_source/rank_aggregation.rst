@@ -141,7 +141,7 @@ Now an example of using these methods to create a working instance of Rank_aggre
 
 .. code-block :: python
 
-  from rank_aggragtion import Rank_aggregator
+  from rank_aggregation import Rank_aggregator
   #we will use rank_list described in the previous example
 
   #this is an instance ready to being used

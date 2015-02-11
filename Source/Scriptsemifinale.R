@@ -9,11 +9,11 @@ k_prec <- c(5,10,20,55)
 # Flavonoids <- Flavonoids[a,]
 # row.names(Flavonoids) <- NULL
 # 
-Fos <- read.table("new_big_table.csv", sep=",", header=T)
+Fos <- read.table("fos_empty.csv", sep="\t", header=F)
 colnames(Fos) <- c("alpha", "Tile Dimension", "Number of Iteration", 1:55)
-a <- c(1:80,85:164)
-Fos <- Fos[a,]
-row.names(Fos) <- NULL
+# a <- c(1:80,85:164)
+# Fos <- Fos[a,]
+# row.names(Fos) <- NULL
 
 ClassTable <- read.table("FOS_Classes_v6.csv", header=F, sep=",")
 
@@ -35,7 +35,7 @@ Exp4 <- Fos[1:80,]
 row.names(Exp4) <- NULL
 
 lowite <- vector("numeric")
-lowite <- sort(c(which(Fos[,3]==20),which(Fos[,3]==50)))
+lowite <- sort(c(which(Fos[,3]==100),which(Fos[,3]==250)))
 Low_it <- Fos[lowite,]
 row.names(Low_it) <- NULL
 
@@ -60,10 +60,14 @@ row.names(Big_t) <- NULL
 # Big_tF <- Flavonoids[bigtileF,]
 # row.names(Big_tF) <- NULL
 
+a <- c(6,10,26,30,56,60)
+expp <- Fos[a,]
+row.names(expp) <- NULL
+
 ##--------------------------------------
 ## Applicazione esperimenti a dataframe
 ##--------------------------------------
-dataframe <- Fos  # cambiare qua dataframe da considerare. 
+dataframe <- expp  # cambiare qua dataframe da considerare. 
 
 
 # Per usare le varie funzioni su dataframe
@@ -93,3 +97,12 @@ for(i in 1:length(k_prec)){
 print(a)
 
 # write.table(AA, "ranker_aggregator.txt", sep=" ")
+a <- vector("numeric", length=4)
+n <- 25
+for(j in 1:n){
+  AA <- random_ranker(dataframe, 3)
+  for(i in 1:length(k_prec)){
+    a[i] <- a[i] + precision_computator(AA, ClassTable, k_prec[i])
+  }  
+}
+print(a/25)

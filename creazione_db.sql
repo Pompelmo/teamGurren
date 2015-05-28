@@ -36,7 +36,7 @@ CREATE TABLE B_coord
 
 CREATE TABLE B_neig
 (
-	business_id char(22) PRIMARY KEY,
+	business_id char(22),
 	neighborhood varchar(25)
 	)
 ;
@@ -50,7 +50,7 @@ CREATE TABLE R_stars
 	funny int,
 	useful int,
 	cool int,
-	PRIMARY KEY(business_id,user_id)
+	PRIMARY KEY(business_id,user_id, data)
 	)
 ;
 
@@ -58,26 +58,17 @@ CREATE TABLE R_text
 (
 	business_id char(22),
 	user_id char(22),
-	testo text,
-	PRIMARY KEY(business_id,user_id)
+	data date,
+	testo text
 	)
-;
-
-CREATE TABLE R_type
-(
-	user_id char(22) PRIMARY KEY,
-	name varchar(25),
-	funny int,
-	useful int,
-	cool int
-	)	
 ;
 
 CREATE TABLE U_info
 (
 	user_id char(22) PRIMARY KEY,
+	name varchar(25),
 	review_count int,
-	average_star real,
+	average_stars real,
 	registered_on date
 	)
 ;
@@ -99,7 +90,7 @@ CREATE TABLE U_fans
 CREATE TABLE U_friends
 (
 	user_id char(22),
-	friend_id char(22),
+	friend_id char(22), -- foreign key?
 	PRIMARY KEY (user_id, friend_id)
 	)
 ;
@@ -113,8 +104,14 @@ CREATE TABLE U_compliments
 	)
 ;	
 
-
-
+CREATE TABLE U_votes
+(
+	user_id char(22) PRIMARY KEY,
+	funny int,
+	useful int,
+	cool int
+	)	
+;
 
 
 		

@@ -107,8 +107,8 @@ ORDER BY business_id, user_id
 ;
 
 -- qua ho letto nella mail ci possono essere diversi testi
-INSERT INTO R_text (business_id, user_id, testo)
-SELECT DISTINCT business_id, user_id, testo
+INSERT INTO R_text (business_id, user_id, data, testo)
+SELECT DISTINCT business_id, user_id, data, testo
 FROM t
 ORDER BY business_id, user_id
 ;
@@ -133,7 +133,7 @@ CREATE temporary TABLE t (
 	name varchar(25),
 	review_count int,
 	average_stars real,
-	registered_on date,--char(7),
+	registered_on char(7),
 	fans_count int,
 	elite_year_count int
 	)
@@ -144,8 +144,8 @@ FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-profiles.c
 DELIMITER ',' CSV HEADER;
 
 -- qua il registered on bisogna vedere lo prenda come data
-INSERT INTO U_info (user_id, name, review_count, average_stars, registered_on)
-SELECT DISTINCT user_id, name, review_count, average_stars, registered_on
+INSERT INTO U_info (user_id, name, review_count, average_stars) --, registered_on)
+SELECT DISTINCT user_id, name, review_count, average_stars--, registered_on
 FROM t
 ORDER BY user_id
 ;

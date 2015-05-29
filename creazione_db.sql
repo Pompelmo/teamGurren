@@ -2,10 +2,9 @@ CREATE TABLE B_address
 (
 	business_id char(22) PRIMARY KEY,
 	name varchar(60),
-	address_1 varchar(100),
-	city varchar(30),
-	state char(3),
-	adress_2 varchar(10)
+        full_address varchar(110)
+--	address_1 varchar(100),
+--	adress_2 varchar(10)
 	)
 ;
 
@@ -30,7 +29,9 @@ CREATE TABLE B_coord
 (
 	business_id char(22) PRIMARY KEY,
 	latitude double precision,
-	longitude double precision
+	longitude double precision,
+	city varchar(30),
+	state char(3)
 	)
 ;
 

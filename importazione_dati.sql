@@ -1,3 +1,27 @@
+-- ######################################### --
+-- Create function to separate address parts --
+-- ######################################### --
+
+--CREATE FUNCTION separate_address (
+--	address RECORD
+--)
+--RETURNS void AS $$
+
+--DECLARE
+--	_address_1 RECORD,
+--	_address_2 RECORD,
+--	part text;
+
+--DECLARE percorso varchar(100):= "/home/sofia/Documenti/db/teamGurren-master";
+
+--BEGIN
+--	foreach part in string_to_array
+--	INSERT INTO B_address (address_1, address_2)
+--        VALUES (_address_1,_address_1);
+--END;
+--$$ LANGUAGE plpgsql;
+
+
 -- ####################################### --
 -- first part, using business-category.csv --
 -- ####################################### --
@@ -6,7 +30,7 @@ CREATE temporary TABLE t (
 	record_type char(8),
 	business_id char(22),
 	name varchar(60),
-	full_adress text,
+	full_address text,
 	city varchar(30),
 	state char(3),
 	stars real,
@@ -17,7 +41,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-categories.csv' 
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/business-categories.csv' 
 DELIMITER ',' CSV HEADER;
 
 INSERT INTO B_stars (business_id, stars, review_count, open)
@@ -31,7 +55,12 @@ SELECT DISTINCT business_id, category
 FROM t
 ORDER BY business_id
 ;
--- manca da mettere B_address...
+
+INSERT INTO B_address (business_id, name, full_address)
+SELECT DISTINCT business_id, name, full_address
+FROM t
+ORDER BY business_id
+;
 
 DROP TABLE t
 ;
@@ -53,11 +82,11 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-neighborhoods.csv' 
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/business-neighborhoods.csv' 
 DELIMITER ',' CSV HEADER;
 
-INSERT INTO B_coord (business_id, latitude, longitude)
-SELECT DISTINCT business_id, latitude, longitude
+INSERT INTO B_coord (business_id, latitude, longitude, city, state)
+SELECT DISTINCT business_id, latitude, longitude, city, state
 FROM t
 ORDER BY business_id
 ;
@@ -96,7 +125,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/review-votes.csv' 
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/review-votes.csv' 
 DELIMITER ',' CSV HEADER;
 
 -- qua c'è da trasformare in funny useful cool
@@ -140,7 +169,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-profiles.csv' 
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-profiles.csv' 
 DELIMITER ',' CSV HEADER;
 
 -- qua il registered on bisogna vedere lo prenda come data
@@ -180,7 +209,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-friends.csv' 
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-friends.csv' 
 DELIMITER ',' CSV HEADER;
 
 INSERT INTO U_friends (user_id, friend_id)
@@ -206,7 +235,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-compliments.csv' 
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-compliments.csv' 
 DELIMITER ',' CSV HEADER;
 
 INSERT INTO U_compliments (user_id, compliment_type, num_compliments_of_this_type)
@@ -232,7 +261,7 @@ DROP TABLE t
 --;
 
 --COPY t
---FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-votes.csv' 
+--FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-votes.csv' 
 --DELIMITER ',' CSV HEADER;
 
 -- da popolare U_votes

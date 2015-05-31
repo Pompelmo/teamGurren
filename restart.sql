@@ -39,6 +39,8 @@ DROP TABLE U_compliments
 DROP TABLE U_votes
 ;
 
+DROP FUNCTION registered_on_f (registered_on char(7))
+;
 
 
 

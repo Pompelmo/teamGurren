@@ -172,9 +172,18 @@ COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-profiles.csv' 
 DELIMITER ',' CSV HEADER;
 
--- qua il registered on bisogna vedere lo prenda come data
-INSERT INTO U_info (user_id, name, review_count, average_stars) --, registered_on)
-SELECT DISTINCT user_id, name, review_count, average_stars--, registered_on
+CREATE FUNCTION registered_on_f (
+	registered_on char(7)
+)
+RETURNS date AS $$
+
+BEGIN
+	RETURN (to_date(registered_on || '-02', 'YYYY-MM-DD'));
+END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO U_info (user_id, name, review_count, average_stars, registered_on)
+SELECT DISTINCT user_id, name, review_count, average_stars, registered_on_f(registered_on)
 FROM t
 ORDER BY user_id
 ;

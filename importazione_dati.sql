@@ -44,6 +44,12 @@ COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/business-categories.csv' 
 DELIMITER ',' CSV HEADER;
 
+INSERT INTO record_type(business_categories_type)
+SELECT DISTINCT record_type
+FROM t
+LIMIT 1
+;
+
 INSERT INTO B_stars (business_id, stars, review_count, open)
 SELECT DISTINCT business_id, stars, review_count, open
 FROM t
@@ -85,6 +91,19 @@ COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/business-neighborhoods.csv' 
 DELIMITER ',' CSV HEADER;
 
+update record_type
+set business_neighborhoods_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
+
+--INSERT INTO record_type(business_neighborhoods_type)
+--SELECT DISTINCT record_type
+--FROM t
+--LIMIT 1
+--;
+
 INSERT INTO B_coord (business_id, latitude, longitude, city, state)
 SELECT DISTINCT business_id, latitude, longitude, city, state
 FROM t
@@ -105,8 +124,47 @@ DROP TABLE t
 -- Third part, using business-openhours.csv --
 -- ######################################## --
 
--- qua volevo fare la tabella come dicevo, ma in realtà non ci serve per le query
--- quindi mi sa che dobbiamo trovare un altro modo (?)
+CREATE temporary TABLE t (
+	record_type char(10),
+	business_id char(22),
+	name varchar(60),
+	full_address text,
+	city varchar(30),
+	state char(3),
+	open boolean,
+	day char(9),
+	opens time,  --funziona?
+	closes time --funziona?
+	)
+;
+
+COPY t
+FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/business-openhours.csv' 
+DELIMITER ',' CSV HEADER;
+
+update record_type
+set business_openhours_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
+
+--INSERT INTO record_type(business_openhours_type)
+--SELECT DISTINCT record_type
+--FROM t
+--LIMIT 1
+--;
+
+INSERT INTO R_stars (business_id, user_id, stars, data)
+SELECT DISTINCT business_id, user_id, stars, data
+FROM t
+ORDER BY business_id, user_id
+;
+
+--tabella openhours da popolare
+
+DROP TABLE t
+;
 
 -- ################################### --
 -- Fourth part, using review-votes.csv --
@@ -128,6 +186,19 @@ COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/review-votes.csv' 
 DELIMITER ',' CSV HEADER;
 
+update record_type
+set review_votes_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
+
+--INSERT INTO record_type(review_votes_type)
+--SELECT DISTINCT record_type
+--FROM t
+--LIMIT 1
+--;
+
 -- qua c'è da trasformare in funny useful cool
 INSERT INTO R_stars (business_id, user_id, stars, data)
 SELECT DISTINCT business_id, user_id, stars, data
@@ -135,7 +206,7 @@ FROM t
 ORDER BY business_id, user_id
 ;
 
--- qua ho letto nella mail ci possono essere diversi testi
+-- qua ho letto nella mail ci possono essere diversi testi -> cambiare primary key?
 INSERT INTO R_text (business_id, user_id, data, testo)
 SELECT DISTINCT business_id, user_id, data, testo
 FROM t
@@ -171,6 +242,19 @@ CREATE temporary TABLE t (
 COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-profiles.csv' 
 DELIMITER ',' CSV HEADER;
+
+update record_type
+set user_profiles_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
+
+--INSERT INTO record_type(user_profiles_type)
+--SELECT DISTINCT record_type
+--FROM t
+--LIMIT 1
+--;
 
 CREATE FUNCTION registered_on_f (
 	registered_on char(7)
@@ -221,6 +305,19 @@ COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-friends.csv' 
 DELIMITER ',' CSV HEADER;
 
+update record_type
+set user_friends_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
+
+--INSERT INTO record_type(user_friends_type)
+--SELECT DISTINCT record_type
+--FROM t
+--LIMIT 1
+--;
+
 INSERT INTO U_friends (user_id, friend_id)
 SELECT DISTINCT user_id, friend_id
 FROM t
@@ -247,6 +344,19 @@ COPY t
 FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-compliments.csv' 
 DELIMITER ',' CSV HEADER;
 
+update record_type
+set user_compliments_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
+
+--INSERT INTO record_type(user_compliments_type)
+--SELECT DISTINCT record_type
+--FROM t
+--LIMIT 1
+--;
+
 INSERT INTO U_compliments (user_id, compliment_type, num_compliments_of_this_type)
 SELECT DISTINCT user_id, compliment_type, num_compliments_of_this_type
 FROM t
@@ -272,6 +382,19 @@ DROP TABLE t
 --COPY t
 --FROM '/home/sofia/Documenti/db/teamGurren-master/tmp/dati/user-votes.csv' 
 --DELIMITER ',' CSV HEADER;
+
+--update record_type
+--set user_votes_type = 
+--	(SELECT DISTINCT record_type
+--	FROM t
+--	LIMIT 1)
+--;
+
+----INSERT INTO record_type(user_votes_type)
+----SELECT DISTINCT record_type
+----FROM t
+----LIMIT 1
+----;
 
 -- da popolare U_votes
 

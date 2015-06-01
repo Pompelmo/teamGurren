@@ -2,7 +2,7 @@ CREATE TABLE B_address
 (
 	business_id char(22) PRIMARY KEY,
 	name varchar(60),
-        full_address varchar(110)
+    full_address varchar(110)
 --	address_1 varchar(100),
 --	adress_2 varchar(10)
 	)
@@ -91,7 +91,7 @@ CREATE TABLE U_fans
 CREATE TABLE U_friends
 (
 	user_id char(22),
-	friend_id char(22), -- foreign key?
+	friend_id char(22),
 	PRIMARY KEY (user_id, friend_id)
 	)
 ;

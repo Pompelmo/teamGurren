@@ -206,7 +206,6 @@ FROM t
 ORDER BY business_id, user_id
 ;
 
--- qua ho letto nella mail ci possono essere diversi testi -> cambiare primary key?
 INSERT INTO R_text (business_id, user_id, data, testo)
 SELECT DISTINCT business_id, user_id, data, testo
 FROM t
@@ -262,7 +261,7 @@ CREATE FUNCTION registered_on_f (
 RETURNS date AS $$
 
 BEGIN
-	RETURN (to_date(registered_on || '-02', 'YYYY-MM-DD'));
+	RETURN (to_date(registered_on || '-01', 'YYYY-MM-DD'));
 END;
 $$ LANGUAGE plpgsql;
 

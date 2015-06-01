@@ -7,21 +7,24 @@ WITH c_name AS ( SELECT column_name AS c
 	 u_names AS ( SELECT user_id, name
 				  FROM u_info NATURAL JOIN u_votes	
 				),
-	 u_final AS ( (SELECT user_id, name, c AS vote_types, funny AS count
+	 u_final AS ( (SELECT user_id, name, c AS vote_type, funny AS count
 				   FROM c_name, u_names NATURAL JOIN u_votes
 			  	   WHERE c = 'funny'
 			      )	
 					UNION
-				  ( SELECT user_id, name, c AS vote_types, useful AS count
+				  ( SELECT user_id, name, c AS vote_type, useful AS count
 					FROM c_name, u_names NATURAL JOIN u_votes
 					WHERE c = 'useful'	
 				  )
 					UNION
-				  ( SELECT user_id, name, c AS vote_types, cool AS count
+				  ( SELECT user_id, name, c AS vote_type, cool AS count
 	 			    FROM c_name, u_names NATURAL JOIN u_votes
 					WHERE c = 'cool'
 					)
 				  )		
+/*
+COPY (SELECT * FROM PROJECT.STUDENTI) TO '/TMP/TEST.CSV' WITH CSV;
+*/
 	
 SELECT *
 FROM u_final

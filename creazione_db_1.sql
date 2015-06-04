@@ -29,6 +29,32 @@ CREATE TABLE B_coord
 	)
 ;
 
+CREATE TABLE B_opens
+(
+	business_id char(22),
+	Monday time,
+	Tuesday time,
+	Wednesday time,
+	Thursday time,
+	Friday time,
+	Saturday time,
+	Sunday time
+	)
+;
+
+CREATE TABLE B_closes
+(
+	business_id char(22),
+	Monday time,
+	Tuesday time,
+	Wednesday time,
+	Thursday time,
+	Friday time,
+	Saturday time,
+	Sunday time
+	)
+;
+
 CREATE TABLE R_stars
 (
 	business_id char(22),

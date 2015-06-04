@@ -87,8 +87,7 @@ DROP TABLE t
 
 -- ######################################## --
 -- Third part, using business-openhours.csv --
--- Populating R_stars, B_opens,	  		    --
--- and B_closes						        --
+-- Populating B_opens, and B_closes	        --					        --
 -- ######################################## --
 
 CREATE temporary TABLE t (
@@ -116,7 +115,35 @@ set business_openhours_type =
 	LIMIT 1)
 ;
 
---tabella openhours da popolare
+INSERT INTO B_opens (business_id, Monday, Tuesday, Wednesday, Thursday,
+						Friday, Saturday, Sunday)
+SELECT DISTINCT business_id,
+		sum(case when day = 'Monday' then opens end) as Monday,
+		sum(case when day = 'Tuesday' then opens end) as Tuesday,
+		sum(case when day = 'Wednesday' then opens end) as Wednesday,
+		sum(case when day = 'Thursday' then opens end) as Thursday,
+		sum(case when day = 'Friday' then opens end) as Friday,
+		sum(case when day = 'Saturday' then opens end) as Saturday,
+		sum(case when day = 'Sunday' then opens end) as Sunday
+FROM t
+GROUP BY business_id
+ORDER BY business_id
+;
+
+INSERT INTO B_closes (business_id, Monday, Tuesday, Wednesday, Thursday,
+						Friday, Saturday, Sunday)
+SELECT DISTINCT business_id,
+		sum(case when day = 'Monday' then closes end) as Monday,
+		sum(case when day = 'Tuesday' then closes end) as Tuesday,
+		sum(case when day = 'Wednesday' then closes end) as Wednesday,
+		sum(case when day = 'Thursday' then closes end) as Thursday,
+		sum(case when day = 'Friday' then closes end) as Friday,
+		sum(case when day = 'Saturday' then closes end) as Saturday,
+		sum(case when day = 'Sunday' then closes end) as Sunday
+FROM t
+GROUP BY business_id
+ORDER BY business_id
+;
 
 DROP TABLE t
 ;
@@ -127,7 +154,7 @@ DROP TABLE t
 -- ################################### --
 
 CREATE temporary TABLE t (
-	record_type char(8),
+	record_type char(6),
 	business_id char(22),
 	user_id char(22),
 	stars smallint,
@@ -169,7 +196,7 @@ DROP TABLE t
 -- ################################## --
 
 CREATE temporary TABLE t (
-	record_type char(8),
+	record_type char(4),
 	user_id char(22),
 	name varchar(25),
 	review_count int,
@@ -290,13 +317,18 @@ DROP TABLE t
 -- ################################# --
 
 CREATE temporary TABLE t (
-	record_type char(20),
+	record_type char(9),
 	user_id char(22),
 	name varchar(25),
 	vote_type char(6),
     count smallint
 	)
 ;
+
+COPY t
+FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-votes.csv' 
+DELIMITER ',' CSV HEADER;
+
 update record_type
 set user_votes_type = 
 	(SELECT DISTINCT record_type
@@ -304,11 +336,7 @@ set user_votes_type =
 	LIMIT 1)
 ;
 
-COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-votes.csv' 
-DELIMITER ',' CSV HEADER;
-
-INSERT INTO U_votes (user_id, funny,useful,cool)
+INSERT INTO U_votes (user_id, funny, useful, cool)
 SELECT DISTINCT user_id,
 		sum(case when vote_type = 'funny' then count end) as funny,
 		sum(case when vote_type = 'useful' then count end) as useful,

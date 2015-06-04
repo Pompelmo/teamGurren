@@ -2,7 +2,7 @@ CREATE TABLE B_address
 (
 	business_id char(22) PRIMARY KEY,
 	name varchar(60),
-    full_address varchar(110),
+    full_address text,
 	stars real,
 	review_count smallint,
 	open boolean
@@ -24,8 +24,7 @@ CREATE TABLE B_coord
 	longitude double precision,
 	city varchar(25),
 	state char(3),
-	neighborhood varchar(25),
-	PRIMARY KEY (business_id, neighborhood)
+	neighborhood varchar(25)
 	)
 ;
 

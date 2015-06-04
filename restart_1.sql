@@ -9,6 +9,12 @@ DROP TABLE B_category
 DROP TABLE B_coord
 ;
 
+DROP TABLE B_opens
+;
+
+DROP TABLE B_closes
+;
+
 DROP TABLE R_stars
 ;
 

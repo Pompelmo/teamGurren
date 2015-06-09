@@ -5,10 +5,29 @@
 -- ########################################## --
 -- First part, recreate business-category.csv --
 -- ########################################## --
-
+COPY (
+	SELECT r.business_categories_type AS record_type, a.business_id, a.name, 
+			a.full_address, a.city, a.state, to_char(a.stars,'FM9.0') AS stars, a.review_count,
+	 		initcap(a.open::boolean::varchar(5)) AS open, c.category
+	FROM b_address a NATURAL JOIN b_category c, record_type r
+	ORDER BY a.business_id
+	)
+TO '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-categories00.csv'
+WITH CSV HEADER
+;
+	
 -- ################################################ --
 -- Second part, recreate business-neighborhoods.csv --
 -- ################################################ --
+
+COPY (
+	SELECT r.business_neighborhoods_type AS record_type, a.business_id, a.name, 
+			a.city, a.state, c.latitude, c.longitude, c.neighborhood
+	FROM b_address a NATURAL JOIN b_coord c, record_type r
+	ORDER BY a.business_id
+	)
+TO '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-neighborhoods00.csv'
+WITH CSV HEADER ;
 
 -- ########################################### --
 -- Third part, recreate business-openhours.csv --
@@ -69,8 +88,9 @@ WITH c_name AS ( SELECT column_name AS c
 		ORDER BY business_id		
 )				
 TO '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-openhours00.csv' 
-WITH CSV HEADER ;
-
+WITH CSV HEADER
+;
+/*
 -- ###################################### --
 -- Fourth part, recreate review-votes.csv --
 -- ###################################### --
@@ -90,7 +110,7 @@ WITH CSV HEADER ;
 -- ################################### --
 -- Eight part, recreate user-votes.csv --
 -- ################################### --
-/*
+
 WITH c_name AS ( SELECT column_name AS c
 				 FROM information_schema.columns
 			 	 WHERE table_name = 'u_votes' AND column_name <> 'user_id'

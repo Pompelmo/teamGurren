@@ -2,27 +2,20 @@
 		QUERY 09 - Benevolent Reviewers
 */
 
-WITH business_stars AS (SELECT business_id, stars
-						FROM b_address
-						),
-	 stars			AS	(SELECT DISTINCT business_id, user_id, data, stars
-						FROM r_stars 
-						),										
-	 user_review  AS   (SELECT user_id, count(*) AS review_count
+WITH user_review  AS   (SELECT user_id, count(*) AS review_count
 						-- to deal with reviews that have been edited
 						FROM (SELECT DISTINCT business_id, user_id, data
-							  FROM stars 
+							  FROM r_stars 
 							 )  A	
 						GROUP BY user_id
 						HAVING count(*) >= 10	
 						),					
 	 benev_review AS   (SELECT S.user_id, count(*) AS n_b_review
-						FROM business_stars B JOIN stars S
+						FROM b_address B JOIN r_stars S
 								ON (B.business_id = S.business_id)
 						WHERE S.stars > B.stars
 						GROUP BY S.user_id		
-						)
-																				
+						)																				
 	 SELECT R.user_id AS "user_id", 
 			review_count AS "num review user", 
 			n_b_review AS "num review above average"

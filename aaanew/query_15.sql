@@ -1,6 +1,6 @@
 -- c2 --> per ogni user_id che ha recensito delle c1, numero di recensioni totali
 -- c3 --> per ogni user_id che ha recensito delle c1, numero di recensioni c1
-with tabella as(
+--with tabella as(
 WITH	
 	c2 AS (SELECT DISTINCT R.user_id, COUNT(R.business_id)
 	      FROM R_stars R
@@ -18,7 +18,8 @@ WITH
 SELECT DISTINCT c2.user_id
 FROM c2,c3
 WHERE c3.count = 0.75*c2.count
-)select count (*) from tabella
+)
+--select count (*) from tabella
 ;
 --808,001 ms
 --297 rows

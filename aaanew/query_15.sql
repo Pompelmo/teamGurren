@@ -18,8 +18,8 @@ WITH
 SELECT DISTINCT c2.user_id
 FROM c2,c3
 WHERE c3.count = 0.75*c2.count
-)
---select count (*) from tabella
+
+--)select count (*) from tabella
 ;
 --808,001 ms
 --297 rows

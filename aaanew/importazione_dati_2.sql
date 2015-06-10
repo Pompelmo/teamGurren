@@ -79,7 +79,7 @@ set business_openhours_type =
 	FROM p
 	LIMIT 1)
 ;
---SELECT COUNT(*) FROM (select distinct business_id from p) A;
+
 CREATE temporary TABLE q (
 	business_id char(22),
 	name varchar(60),
@@ -119,30 +119,25 @@ FROM ( (SELECT business_id, name, city, state
 		FROM p)	 
 	 ) a
 ;
-/*   da modificare: così b_coord viene con tanti spazi vuoti. verificare cosa conviene fare.
-        			 * tornare ad avere uno con l'intero indirizzo, 1 review count e 1 coord
-					 * mettere tutto in B_address (con i 5 stronzi che sono solo su B_coord)
-					 * lasciare così.
-					 farò i conti domani perché ora ho sonno, buenas noche :)
-*/
+
 INSERT INTO B_address (business_id, name, full_address, city, state, stars, review_count, open)
 SELECT DISTINCT r.business_id, r.name, q.full_address, r.city, r.state,
  				t.stars, t.review_count, t.open
 FROM (r r LEFT OUTER JOIN q q ON (r.business_id = q.business_id)) 
 	LEFT OUTER JOIN t t ON (q.business_id = t.business_id) 
---ORDER BY business_id
+ORDER BY business_id
 ;
 
 INSERT INTO B_category (business_id, category)
 SELECT DISTINCT business_id, category
 FROM t
---ORDER BY business_id
+ORDER BY business_id
 ;
 
 INSERT INTO B_coord (business_id, latitude, longitude, neighborhood)
 SELECT DISTINCT business_id, latitude, longitude, neighborhood
 FROM s
---ORDER BY business_id
+ORDER BY business_id
 ;
 
 
@@ -158,7 +153,7 @@ SELECT DISTINCT business_id,
 		sum(case when day = 'Sunday' then opens end) as Sunday
 FROM p
 GROUP BY business_id
---ORDER BY business_id
+ORDER BY business_id
 ;
 
 INSERT INTO B_closes (business_id, Monday, Tuesday, Wednesday, Thursday,
@@ -173,7 +168,7 @@ SELECT DISTINCT business_id,
 		sum(case when day = 'Sunday' then closes end) as Sunday
 FROM p
 GROUP BY business_id
---ORDER BY business_id
+ORDER BY business_id
 ;
 
 DROP TABLE t
@@ -225,7 +220,7 @@ SELECT DISTINCT business_id, user_id, stars, data, testo,
 			sum(case when vote_type = 'cool' then count end) as cool
 FROM t
 GROUP BY business_id, user_id, stars, data, testo
---ORDER BY business_id, user_id
+ORDER BY business_id, user_id
 ;
 
 DROP TABLE t
@@ -354,19 +349,19 @@ INSERT INTO U_info (user_id, name, review_count, average_stars, registered_on, f
 SELECT DISTINCT r.user_id, r.name, t.review_count, t.average_stars, 
 				registered_on_f(t.registered_on), t.fans_count, t.elite_year_count
 FROM r r LEFT OUTER JOIN t t ON (r.user_id = t.user_id)
---ORDER BY user_id
+ORDER BY user_id
 ;
 
 INSERT INTO U_friends (user_id, friend_id)
 SELECT DISTINCT user_id, friend_id
 FROM s
---ORDER BY user_id
+ORDER BY user_id
 ;
 
 INSERT INTO U_compliments (user_id, compliment_type, num_compliments_of_this_type)
 SELECT DISTINCT user_id, compliment_type, num_compliments_of_this_type
 FROM p
---ORDER BY user_id
+ORDER BY user_id
 ;
 
 INSERT INTO U_votes (user_id, funny, useful, cool)
@@ -376,7 +371,7 @@ SELECT DISTINCT user_id,
 		sum(case when vote_type = 'cool' then count end) as cool
 FROM q
 GROUP BY user_id
---ORDER BY user_id
+ORDER BY user_id
 ;
 
 DROP TABLE t

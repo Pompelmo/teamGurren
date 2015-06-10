@@ -1,3 +1,12 @@
+/*
+	Query 15 - Hipster
+	Trovare gli utenti che hanno scritto almeno 
+	il 75% delle review per delle attività tra 
+	le 10% meno recensite. [`review_count`].
+	Schema risultato:
+	`user_id`
+*/
+
 -- c2 --> per ogni user_id che ha recensito delle c1, numero di recensioni totali
 -- c3 --> per ogni user_id che ha recensito delle c1, numero di recensioni c1
 --with tabella as(

@@ -129,6 +129,20 @@ WITH (FORMAT CSV, HEADER TRUE)
 -- Seventh part, recreate user-compliments.csv --
 -- ########################################### --
 
+COPY (
+	SELECT *
+	FROM	(SELECT
+			R.user_compliments_type AS record_type,
+     			f.user_id,i.name,f.compliment_type,
+			f.num_compliments_of_this_type
+			FROM u_compliments f JOIN u_info i ON (f.user_id = i.user_id),record_type r
+		) AS friends_table
+	ORDER BY user_id
+)
+TO '/tmp/output/user-compliments.csv'
+WITH (FORMAT CSV, HEADER TRUE) 
+;
+
 -- ################################### --
 -- Eight part, recreate user-votes.csv --
 -- ################################### --

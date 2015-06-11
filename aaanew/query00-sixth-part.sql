@@ -11,7 +11,7 @@ FROM	(SELECT
 	WHERE U_friends.user_id=U_info.user_id
 	) AS friends_table
 ORDER BY user_id)
-TO '/tmp/user-friends.csv'
+TO '/tmp/output/user-friends.csv'
 CSV HEADER
 
 ;

@@ -238,7 +238,7 @@ CREATE temporary TABLE t (
 	average_stars real,
 	registered_on char(7),
 	fans_count smallint,
-	elite_year_count smallint
+	elite_years_count smallint
 	)
 ;
 
@@ -254,7 +254,7 @@ set user_profiles_type =
 ;
 
 CREATE temporary TABLE s (
-	record_type char(8),
+	record_type char(6),
 	user_id char(22),
 	name varchar(25),
 	friend_id char(22)
@@ -347,7 +347,7 @@ FROM ( (SELECT user_id, name
 
 INSERT INTO u_info (user_id, name, review_count, average_stars, registered_on, fans_count, elite_years_count)
 SELECT DISTINCT r.user_id, r.name, t.review_count, t.average_stars, 
-				registered_on_f(t.registered_on), t.fans_count, t.elite_year_count
+				registered_on_f(t.registered_on), t.fans_count, t.elite_years_count
 FROM r r LEFT OUTER JOIN t t ON (r.user_id = t.user_id)
 ORDER BY user_id
 ;

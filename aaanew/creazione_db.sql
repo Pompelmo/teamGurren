@@ -74,7 +74,7 @@ CREATE TABLE u_info
 	average_stars real,
 	registered_on date,
 	fans_count smallint,
-	elite_year_count smallint
+	elite_years_count smallint
 	)
 ;
 
@@ -110,7 +110,7 @@ CREATE TABLE record_type
 	business_openhours_type char(10),
 	user_profiles_type char(4),
 	user_compliments_type char(10),
-	user_friends_type char(8),
+	user_friends_type char(6),
 	user_votes_type char(9)	
 	)
 ;	

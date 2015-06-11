@@ -1,5 +1,12 @@
 /*
 		QUERY 09 - Benevolent Reviewers
+		restituire la lista di tutti i *benevolent reviewers*. Un utente si definisce 
+		*benevolent reviewer* se ha scritto almeno 10 recensioni e se in almeno il 
+		75% delle sue recensioni ha dato un voto più alto della media per 
+		lo stesso esercizio  (attributo [`stars`] in `business-categories.csv`). 
+		Ignorare le recensioni per attività per cui non si conosca il voto medio.
+		Schema risultato:
+		`user_id` | `num review user` | `num review above average`
 */
 
 WITH user_review  AS   (SELECT user_id, COUNT(*) AS review_count

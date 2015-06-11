@@ -12,8 +12,8 @@ COPY (
 	FROM b_address a NATURAL JOIN b_category c, record_type r
 	ORDER BY a.business_id
 	)
-TO '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-categories00.csv'
-WITH CSV HEADER
+TO '/tmp/output/business-categories.csv'
+WITH (FORMAT CSV, HEADER TRUE, FORCE_QUOTE(name, full_address, category)) 
 ;
 	
 -- ################################################ --
@@ -26,8 +26,9 @@ COPY (
 	FROM b_address a NATURAL JOIN b_coord c, record_type r
 	ORDER BY a.business_id
 	)
-TO '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-neighborhoods00.csv'
-WITH CSV HEADER ;
+TO '/tmp/output/business-neighborhoods.csv'
+WITH (FORMAT CSV, HEADER TRUE, FORCE_QUOTE(name, city, neighborhood)) 
+;
 
 -- ########################################### --
 -- Third part, recreate business-openhours.csv --
@@ -87,10 +88,10 @@ WITH c_name AS ( SELECT column_name AS c
 		) A 
 		ORDER BY business_id		
 )				
-TO '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-openhours00.csv' 
-WITH CSV HEADER
+TO '/tmp/output/business-openhours.csv' 
+WITH (FORMAT CSV, HEADER TRUE, FORCE_QUOTE(name, full_address)) 
 ;
-/*
+
 -- ###################################### --
 -- Fourth part, recreate review-votes.csv --
 -- ###################################### --
@@ -98,6 +99,15 @@ WITH CSV HEADER
 -- ##################################### --
 -- Fifth part, recreate user-profile.csv --
 -- ##################################### --
+COPY ( SELECT user_profiles_type AS record_type, user_id, name,
+			review_count, to_char(average_stars,'FM9.09') AS average_stars,
+			to_char(registered_on,'YYYY-MM') AS registered_on, fans_count, elite_years_count
+	   FROM u_info, record_type
+	   ORDER BY user_id
+)
+TO '/tmp/output/user-profiles.csv'
+WITH (FORMAT CSV, HEADER TRUE, FORCE_QUOTE(name))
+;
 
 -- ##################################### --
 -- Sixth part, recreate user-friends.csv --
@@ -110,34 +120,31 @@ WITH CSV HEADER
 -- ################################### --
 -- Eight part, recreate user-votes.csv --
 -- ################################### --
-
+COPY (
 WITH c_name AS ( SELECT column_name AS c
 				 FROM information_schema.columns
 			 	 WHERE table_name = 'u_votes' AND column_name <> 'user_id'
 			    ),
-	 u_names AS ( SELECT user_id, name
-				  FROM u_info NATURAL JOIN u_votes	
-				),
-	 u_final AS ( (SELECT user_id, name, c AS vote_type, funny AS count
-				   FROM c_name, u_names NATURAL JOIN u_votes
-			  	   WHERE c = 'funny'
-			      )	
-					UNION
-				  ( SELECT user_id, name, c AS vote_type, useful AS count
-					FROM c_name, u_names NATURAL JOIN u_votes
-					WHERE c = 'useful'	
-				  )
-					UNION
-				  ( SELECT user_id, name, c AS vote_type, cool AS count
-	 			    FROM c_name, u_names NATURAL JOIN u_votes
-					WHERE c = 'cool'
-					)
-				  )		
-
-COPY (SELECT * FROM PROJECT.STUDENTI) TO '/TMP/TEST.CSV' WITH CSV;
-
-	
-SELECT *
-FROM u_final
-ORDER BY user_id
-; */
+	 u_names AS ( SELECT user_votes_type AS record_type, user_id, name
+				  FROM u_info NATURAL JOIN u_votes, record_type	
+				)
+	 SELECT *
+	 FROM ( (SELECT record_type, user_id, name, c AS vote_type, funny AS count
+			 FROM c_name, u_names NATURAL JOIN u_votes
+			 WHERE c = 'funny'
+			 )	
+				UNION
+		   ( SELECT record_type, user_id, name, c AS vote_type, useful AS count
+			 FROM c_name, u_names NATURAL JOIN u_votes
+			 WHERE c = 'useful'	
+			 )
+				UNION
+		   ( SELECT record_type, user_id, name, c AS vote_type, cool AS count
+	 	  	 FROM c_name, u_names NATURAL JOIN u_votes
+			 WHERE c = 'cool'
+			 ) ) A
+	  ORDER BY user_id	
+)								
+TO '/tmp/output/user-votes.csv' 
+WITH (FORMAT CSV, HEADER TRUE) 
+; 

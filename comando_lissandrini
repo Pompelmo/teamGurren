@@ -1,3 +1,6 @@
 La query '00' *sanity check* si ritiene corretta se l'output di
 $ diff --brief <(sort file_originale.csv) <(sort risultato_query.csv)
 non rileva alcuna dufferenza
+
+
+$ diff --brief <(sort business-categories.csv) <(sort business-categories00.csv)

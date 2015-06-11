@@ -120,7 +120,7 @@ FROM ( (SELECT business_id, name, city, state
 	 ) a
 ;
 
-INSERT INTO B_address (business_id, name, full_address, city, state, stars, review_count, open)
+INSERT INTO b_address (business_id, name, full_address, city, state, stars, review_count, open)
 SELECT DISTINCT r.business_id, r.name, q.full_address, r.city, r.state,
  				t.stars, t.review_count, t.open
 FROM (r r LEFT OUTER JOIN q q ON (r.business_id = q.business_id)) 
@@ -128,20 +128,20 @@ FROM (r r LEFT OUTER JOIN q q ON (r.business_id = q.business_id))
 ORDER BY business_id
 ;
 
-INSERT INTO B_category (business_id, category)
+INSERT INTO b_category (business_id, category)
 SELECT DISTINCT business_id, category
 FROM t
 ORDER BY business_id
 ;
 
-INSERT INTO B_coord (business_id, latitude, longitude, neighborhood)
+INSERT INTO b_coord (business_id, latitude, longitude, neighborhood)
 SELECT DISTINCT business_id, latitude, longitude, neighborhood
 FROM s
 ORDER BY business_id
 ;
 
 
-INSERT INTO B_opens (business_id, Monday, Tuesday, Wednesday, Thursday,
+INSERT INTO b_opens (business_id, Monday, Tuesday, Wednesday, Thursday,
 						Friday, Saturday, Sunday)
 SELECT DISTINCT business_id,
 		sum(case when day = 'Monday' then opens end) as Monday,
@@ -156,7 +156,7 @@ GROUP BY business_id
 ORDER BY business_id
 ;
 
-INSERT INTO B_closes (business_id, Monday, Tuesday, Wednesday, Thursday,
+INSERT INTO b_closes (business_id, Monday, Tuesday, Wednesday, Thursday,
 						Friday, Saturday, Sunday)
 SELECT DISTINCT business_id,
 		sum(case when day = 'Monday' then closes end) as Monday,
@@ -213,7 +213,7 @@ set review_votes_type =
 	LIMIT 1)
 ;
 
-INSERT INTO R_stars (business_id, user_id, stars, data, testo, funny, useful, cool)
+INSERT INTO r_stars (business_id, user_id, stars, data, testo, funny, useful, cool)
 SELECT DISTINCT business_id, user_id, stars, data, testo,
 			sum(case when vote_type = 'funny' then count end) as funny,
 			sum(case when vote_type = 'useful' then count end) as useful,
@@ -345,26 +345,26 @@ FROM ( (SELECT user_id, name
 	 ) a
 ;
 
-INSERT INTO U_info (user_id, name, review_count, average_stars, registered_on, fans_count, elite_year_count)
+INSERT INTO u_info (user_id, name, review_count, average_stars, registered_on, fans_count, elite_years_count)
 SELECT DISTINCT r.user_id, r.name, t.review_count, t.average_stars, 
 				registered_on_f(t.registered_on), t.fans_count, t.elite_year_count
 FROM r r LEFT OUTER JOIN t t ON (r.user_id = t.user_id)
 ORDER BY user_id
 ;
 
-INSERT INTO U_friends (user_id, friend_id)
+INSERT INTO u_friends (user_id, friend_id)
 SELECT DISTINCT user_id, friend_id
 FROM s
 ORDER BY user_id
 ;
 
-INSERT INTO U_compliments (user_id, compliment_type, num_compliments_of_this_type)
+INSERT INTO u_compliments (user_id, compliment_type, num_compliments_of_this_type)
 SELECT DISTINCT user_id, compliment_type, num_compliments_of_this_type
 FROM p
 ORDER BY user_id
 ;
 
-INSERT INTO U_votes (user_id, funny, useful, cool)
+INSERT INTO u_votes (user_id, funny, useful, cool)
 SELECT DISTINCT user_id,
 		sum(case when vote_type = 'funny' then count end) as funny,
 		sum(case when vote_type = 'useful' then count end) as useful,

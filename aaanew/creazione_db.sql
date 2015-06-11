@@ -1,6 +1,6 @@
-CREATE TABLE B_address 
+CREATE TABLE b_address 
 (
-	business_id char(22) PRIMARY KEY,
+	business_id char(22),
 	name varchar(60),
     full_address text,
 	city varchar(25),
@@ -11,15 +11,14 @@ CREATE TABLE B_address
 	)
 ;
 
-CREATE TABLE B_category
+CREATE TABLE b_category
 (
 	business_id char(22),
-	category varchar(40),
-	PRIMARY KEY (business_id,category)
+	category varchar(40)
 	)
 ;
 
-CREATE TABLE B_coord
+CREATE TABLE b_coord
 (
 	business_id char(22),
 	latitude double precision,
@@ -28,7 +27,7 @@ CREATE TABLE B_coord
 	)
 ;
 
-CREATE TABLE B_opens
+CREATE TABLE b_opens
 (
 	business_id char(22),
 	Monday time,
@@ -41,7 +40,7 @@ CREATE TABLE B_opens
 	)
 ;
 
-CREATE TABLE B_closes
+CREATE TABLE b_closes
 (
 	business_id char(22),
 	Monday time,
@@ -54,7 +53,7 @@ CREATE TABLE B_closes
 	)
 ;
 
-CREATE TABLE R_stars
+CREATE TABLE r_stars
 (
 	business_id char(22),
 	user_id char(22),
@@ -67,9 +66,9 @@ CREATE TABLE R_stars
 	)
 ;
 
-CREATE TABLE U_info
+CREATE TABLE u_info
 (
-	user_id char(22) PRIMARY KEY,
+	user_id char(22),
 	name varchar(25),
 	review_count smallint,
 	average_stars real,
@@ -79,25 +78,24 @@ CREATE TABLE U_info
 	)
 ;
 
-CREATE TABLE U_friends
+CREATE TABLE u_friends
 (
 	user_id char(22),
 	friend_id char(22)
 	)
 ;
 
-CREATE TABLE U_compliments
+CREATE TABLE u_compliments
 (
 	user_id char(22),
 	compliment_type varchar(10),
-	num_compliments_of_this_type smallint,
-	PRIMARY KEY (user_id, compliment_type)
+	num_compliments_of_this_type smallint
 	)
 ;	
 
-CREATE TABLE U_votes
+CREATE TABLE u_votes
 (
-	user_id char(22) PRIMARY KEY,
+	user_id char(22),
 	funny smallint,
 	useful smallint,
 	cool smallint

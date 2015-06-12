@@ -261,24 +261,20 @@ ORDER BY business_id, user_id
 ;
 
 INSERT INTO r_stars_duplicates (business_id, user_id, stars, data, testo, funny, useful, cool)
-SELECT *
+SELECT DISTINCT business_id, user_id, stars, data, testo,
+		sum(case when vote_type = 'funny' then count end) as funny,
+		sum(case when vote_type = 'useful' then count end) as useful,
+		sum(case when vote_type = 'cool' then count end) as cool
 FROM (
-	(SELECT DISTINCT business_id, user_id, stars, data, testo,
-			sum(case when vote_type = 'funny' then count end) as funny,
-			sum(case when vote_type = 'useful' then count end) as useful,
-			sum(case when vote_type = 'cool' then count end) as cool
+	(SELECT *
 	 FROM ((SELECT * FROM t) EXCEPT ALL (SELECT * FROM s)) A
-	 GROUP BY business_id, user_id, stars, data, testo
 	)
 		UNION
-	(SELECT DISTINCT business_id, user_id, stars, data, testo,
-			sum(case when vote_type = 'funny' then count end) as funny,
-			sum(case when vote_type = 'useful' then count end) as useful,
-			sum(case when vote_type = 'cool' then count end) as cool
+	(SELECT *
 	 FROM q
-	 GROUP BY business_id, user_id, stars, data, testo
 	)
 	) B
+GROUP BY business_id, user_id, stars, data, testo	
 ORDER BY business_id, user_id
 ;
 

@@ -66,6 +66,19 @@ CREATE TABLE r_stars
 	)
 ;
 
+CREATE TABLE r_stars_duplicates
+(
+	business_id char(22),
+	user_id char(22),
+	stars smallint,
+	data date,
+	testo text,	
+	funny smallint,
+	useful smallint,
+	cool smallint
+	)
+;
+
 CREATE TABLE u_info
 (
 	user_id char(22),

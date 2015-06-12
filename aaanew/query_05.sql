@@ -1,5 +1,5 @@
 /*
-		QUERY 05 - eighborhood Limits
+		QUERY 05 - Neighborhood Limits
 		Per ogni quartiere [`neighborhood`] di ogni città trovare la bounding box: 
 		ovvero i vertici del rettangolo disegnato con le longitudini e latitudini massime 
 		e minime delle attività presenti nel quartiere.

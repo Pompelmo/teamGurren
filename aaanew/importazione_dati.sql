@@ -22,7 +22,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-categories.csv' 
+FROM '/tmp/dati/business-categories.csv' 
 DELIMITER ',' CSV HEADER;
 
 
@@ -45,7 +45,7 @@ CREATE temporary TABLE s (
 ;
 
 COPY s
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-neighborhoods.csv' 
+FROM '/tmp/dati/business-neighborhoods.csv' 
 DELIMITER ',' CSV HEADER;
 
 update record_type
@@ -70,7 +70,7 @@ CREATE temporary TABLE p (
 ;
 
 COPY p
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/business-openhours.csv' 
+FROM '/tmp/dati/business-openhours.csv' 
 DELIMITER ',' CSV HEADER;
 
 update record_type
@@ -184,7 +184,7 @@ DROP TABLE q
 ;
 
 DROP TABLE r
-;
+; 
 
 --########################################################################################--
 -- Second part. Here I need just one temp table.
@@ -202,9 +202,33 @@ CREATE temporary TABLE t (
 	)
 ;
 
+CREATE temporary TABLE s (
+	record_type char(6),
+	business_id char(22),
+	user_id char(22),
+	stars smallint,
+	testo text,
+	data date,
+	vote_type varchar(6),
+	count smallint
+	)
+;
+
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/review-votes.csv' 
+FROM '/tmp/dati/review-votes.csv' 
 DELIMITER ',' CSV HEADER;
+
+INSERT INTO s
+SELECT DISTINCT *
+FROM t
+;
+SELECT vote_type, COUNT(*) FROM t GROUP BY vote_type;
+
+SELECT COUNT(*)
+FROM (
+SELECT DISTINCT business_id, user_id, stars, data, testo, vote_type
+FROM t) A
+;
 
 update record_type
 set review_votes_type = 
@@ -214,16 +238,29 @@ set review_votes_type =
 ;
 
 INSERT INTO r_stars (business_id, user_id, stars, data, testo, funny, useful, cool)
+SELECT business_id, user_id, stars, data, testo,
+			sum(case when vote_type = 'funny' then count end) as funny,
+			sum(case when vote_type = 'useful' then count end) as useful,
+			sum(case when vote_type = 'cool' then count end) as cool
+FROM s
+GROUP BY business_id, user_id, stars, data, testo
+ORDER BY business_id, user_id
+;
+
+INSERT INTO r_stars_duplicates (business_id, user_id, stars, data, testo, funny, useful, cool)
 SELECT DISTINCT business_id, user_id, stars, data, testo,
 			sum(case when vote_type = 'funny' then count end) as funny,
 			sum(case when vote_type = 'useful' then count end) as useful,
 			sum(case when vote_type = 'cool' then count end) as cool
-FROM t
+FROM ((SELECT * FROM t) EXCEPT ALL (SELECT * FROM s)) A
 GROUP BY business_id, user_id, stars, data, testo
 ORDER BY business_id, user_id
 ;
 
 DROP TABLE t
+;
+
+DROP TABLE s
 ;
 
 --########################################################################################--
@@ -243,7 +280,7 @@ CREATE temporary TABLE t (
 ;
 
 COPY t
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-profiles.csv' 
+FROM '/tmp/dati/user-profiles.csv' 
 DELIMITER ',' CSV HEADER;
 
 update record_type
@@ -262,7 +299,7 @@ CREATE temporary TABLE s (
 ;
 
 COPY s
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-friends.csv' 
+FROM '/tmp/dati/user-friends.csv' 
 DELIMITER ',' CSV HEADER;
 
 update record_type
@@ -282,7 +319,7 @@ CREATE temporary TABLE p (
 ;
 
 COPY p
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-compliments.csv' 
+FROM '/tmp/dati/user-compliments.csv' 
 DELIMITER ',' CSV HEADER;
 
 update record_type
@@ -302,7 +339,7 @@ CREATE temporary TABLE q (
 ;
 
 COPY q
-FROM '/Users/Kate/Desktop/SECONDO_SEMESTRE/BASE_DI_DATI/PROGETTO/user-votes.csv' 
+FROM '/tmp/dati/user-votes.csv' 
 DELIMITER ',' CSV HEADER;
 
 update record_type

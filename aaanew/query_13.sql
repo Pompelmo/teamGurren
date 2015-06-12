@@ -15,6 +15,5 @@ WITH rev_category AS (SELECT user_id, B.category, AVG(R.stars) AS mstars
 	 FROM (rev_category A1 JOIN u_friends F ON (A1.user_id = F.user_id)) JOIN 
 			rev_category A2 ON (F.friend_id = A2.user_id AND A1.category = A2.category)
 	 WHERE A2.mstars >= 3
-	 ORDER BY A1.user_id)
 ;
 

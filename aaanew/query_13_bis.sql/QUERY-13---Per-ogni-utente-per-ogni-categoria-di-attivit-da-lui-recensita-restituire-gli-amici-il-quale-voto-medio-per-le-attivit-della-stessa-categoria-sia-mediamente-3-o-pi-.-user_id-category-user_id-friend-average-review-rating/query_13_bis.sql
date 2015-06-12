@@ -10,7 +10,7 @@ with voto_medio AS
       SELECT a.user_id AS user_id, AVG(stars) AS ast, b.category AS category
       FROM r_stars a JOIN b_category b ON (a.business_id = b.business_id)
       GROUP BY a.user_id, b.category
-     ),
+     )
       --INDEX mio_hash
       --ON voto_medio
       --USING hash (user_id)

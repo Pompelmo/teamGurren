@@ -234,7 +234,7 @@ INSERT INTO s
 SELECT DISTINCT *
 FROM t
 ;
---q ha i doppioni di merda, quelli con solo il count differente
+
 INSERT INTO q
 SELECT S1.*
 FROM s S1 JOIN s S2 ON (S1.business_id = S2.business_id AND S1.user_id = S2.user_id

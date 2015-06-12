@@ -1,6 +1,6 @@
 CREATE TABLE b_address 
 (
-	business_id char(22),
+	business_id char(22) PRIMARY KEY,
 	name varchar(60),
     full_address text,
 	city varchar(25),
@@ -20,7 +20,7 @@ CREATE TABLE b_category
 
 CREATE TABLE b_coord
 (
-	business_id char(22),
+	business_id char(22) PRIMARY KEY,
 	latitude double precision,
 	longitude double precision,
 	neighborhood varchar(25)
@@ -29,7 +29,7 @@ CREATE TABLE b_coord
 
 CREATE TABLE b_opens
 (
-	business_id char(22),
+	business_id char(22) PRIMARY KEY,
 	Monday time,
 	Tuesday time,
 	Wednesday time,
@@ -42,7 +42,7 @@ CREATE TABLE b_opens
 
 CREATE TABLE b_closes
 (
-	business_id char(22),
+	business_id char(22) PRIMARY KEY,
 	Monday time,
 	Tuesday time,
 	Wednesday time,
@@ -81,7 +81,7 @@ CREATE TABLE r_stars_duplicates
 
 CREATE TABLE u_info
 (
-	user_id char(22),
+	user_id char(22) PRIMARY KEY,
 	name varchar(25),
 	review_count smallint,
 	average_stars real,
@@ -100,7 +100,7 @@ CREATE TABLE u_friends
 
 CREATE TABLE u_compliments
 (
-	user_id char(22),
+	user_id char(22) PRIMARY KEY,
 	compliment_type varchar(10),
 	num_compliments_of_this_type smallint
 	)
@@ -108,7 +108,7 @@ CREATE TABLE u_compliments
 
 CREATE TABLE u_votes
 (
-	user_id char(22),
+	user_id char(22) PRIMARY KEY,
 	funny smallint,
 	useful smallint,
 	cool smallint

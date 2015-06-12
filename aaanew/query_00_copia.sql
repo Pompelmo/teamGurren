@@ -98,44 +98,44 @@ WITH (FORMAT CSV, HEADER TRUE, FORCE_QUOTE(name, full_address))
 
 COPY (
 WITH c_name AS(SELECT column_name AS c
-		FROM information_schema.columns
-	WHERE table_name = 'r_stars' --AND column_name <> 'user_id'
-     	),
-     u_names AS
-	(SELECT review_votes_type AS record_type--,
-	 --business_id, user_id, to_char(stars,'FM9.0') AS stars, testo, data
-	 FROM --r_stars,
-record_type
-	 ),
-     u_3 AS
-	(SELECT business_id, user_id, to_char(stars,'999') AS stars, testo, data, funny, useful, cool
-	 FROM r_stars, record_type
-	 )
-     SELECT * FROM (
- 	(SELECT record_type, business_id, user_id, stars, testo AS "text", data AS "date",
-	c AS vote_type,
-	funny AS count
-	FROM c_name, u_names NATURAL JOIN u_3--r_stars
-	WHERE c = 'funny')	
-	UNION
- 	(SELECT record_type, business_id, user_id, stars, testo AS "text", data AS "date",
-	c AS vote_type,
-	useful AS count
-	FROM c_name, u_names NATURAL JOIN u_3--r_stars
-	WHERE c = 'useful')
-	UNION
- 	(SELECT record_type, business_id, user_id, stars, testo AS "text", data AS "date",
-	c AS vote_type,
-	cool AS count
-	FROM c_name, u_names NATURAL JOIN u_3--r_stars
-	WHERE c = 'cool')
-     )
-     A
-     ORDER BY business_id, user_id
+		       FROM information_schema.columns
+	           WHERE table_name = 'r_stars' 
+     		   ),
+	 all_review AS (
+		 (SELECT *
+		  FROM r_stars
+		 )
+			UNION
+		(SELECT *
+		 FROM r_stars_duplicates
+		 )	
+					),
+	 to_row AS ( 
+		(SELECT business_id, user_id, stars, testo AS "text", 
+			data AS "date", n.c AS vote_type, funny AS count
+		 FROM c_name n, all_review
+		 WHERE c = 'funny'
+		)	
+				UNION
+		(SELECT business_id, user_id, stars, testo AS "text", 
+			data AS "date", n.c AS vote_type, useful AS count
+		 FROM c_name n, all_review
+		 WHERE c = 'useful'
+		)	
+				UNION		
+		(SELECT business_id, user_id, stars, testo AS "text", 
+			data AS "date", n.c AS vote_type, cool AS count
+		 FROM c_name n, all_review
+		 WHERE c = 'cool'
+		)
+					)		
+SELECT review_votes_type AS record_type, to_row.*
+FROM to_row, record_type
+ORDER BY business_id, user_id
 )
 								
 TO '/tmp/output/review-votes.csv' 
-WITH (FORMAT CSV, HEADER TRUE) 
+WITH (FORMAT CSV, HEADER TRUE, FORCE_QUOTE(text)) 
 ; 
 
 -- ##################################### --

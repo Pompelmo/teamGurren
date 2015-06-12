@@ -214,6 +214,18 @@ CREATE temporary TABLE s (
 	)
 ;
 
+CREATE temporary TABLE q (
+	record_type char(6),
+	business_id char(22),
+	user_id char(22),
+	stars smallint,
+	testo text,
+	data date,
+	vote_type varchar(6),
+	count smallint
+	)
+;
+
 COPY t
 FROM '/tmp/dati/review-votes.csv' 
 DELIMITER ',' CSV HEADER;
@@ -222,13 +234,14 @@ INSERT INTO s
 SELECT DISTINCT *
 FROM t
 ;
-SELECT vote_type, COUNT(*) FROM t GROUP BY vote_type;
-
-SELECT COUNT(*)
-FROM (
-SELECT DISTINCT business_id, user_id, stars, data, testo, vote_type
-FROM t) A
-;
+--q ha i doppioni di merda, quelli con solo il count differente
+INSERT INTO q
+SELECT S1.*
+FROM s S1 JOIN s S2 ON (S1.business_id = S2.business_id AND S1.user_id = S2.user_id
+					AND S1.stars = S2.stars AND S1.testo = S2.testo AND S1.data = S2.data
+					AND S1.vote_type = S2.vote_type)
+WHERE S1.count < S2.count
+;					
 
 update record_type
 set review_votes_type = 
@@ -242,18 +255,26 @@ SELECT business_id, user_id, stars, data, testo,
 			sum(case when vote_type = 'funny' then count end) as funny,
 			sum(case when vote_type = 'useful' then count end) as useful,
 			sum(case when vote_type = 'cool' then count end) as cool
-FROM s
+FROM ((SELECT * FROM s) EXCEPT ALL (SELECT * FROM q)) A
 GROUP BY business_id, user_id, stars, data, testo
 ORDER BY business_id, user_id
 ;
 
 INSERT INTO r_stars_duplicates (business_id, user_id, stars, data, testo, funny, useful, cool)
 SELECT DISTINCT business_id, user_id, stars, data, testo,
-			sum(case when vote_type = 'funny' then count end) as funny,
-			sum(case when vote_type = 'useful' then count end) as useful,
-			sum(case when vote_type = 'cool' then count end) as cool
-FROM ((SELECT * FROM t) EXCEPT ALL (SELECT * FROM s)) A
-GROUP BY business_id, user_id, stars, data, testo
+		sum(case when vote_type = 'funny' then count end) as funny,
+		sum(case when vote_type = 'useful' then count end) as useful,
+		sum(case when vote_type = 'cool' then count end) as cool
+FROM (
+	(SELECT *
+	 FROM ((SELECT * FROM t) EXCEPT ALL (SELECT * FROM s)) A
+	)
+		UNION
+	(SELECT *
+	 FROM q
+	)
+	) B
+GROUP BY business_id, user_id, stars, data, testo	
 ORDER BY business_id, user_id
 ;
 
@@ -261,6 +282,9 @@ DROP TABLE t
 ;
 
 DROP TABLE s
+;
+
+DROP TABLE q
 ;
 
 --########################################################################################--

@@ -6,7 +6,7 @@
 -- First part. Using more than one temp_table since there are different set of business_id
 -- for every csv.
 --#########################################################################################--
-/* ---------------------------------------- per fare le prove
+
 CREATE temporary TABLE t (
 	record_type char(8),
 	business_id char(22),
@@ -185,7 +185,7 @@ DROP TABLE q
 
 DROP TABLE r
 ; 
-*/---------------------------------------- per fare le prove
+
 --########################################################################################--
 -- Second part. Here I need just one temp table.
 --########################################################################################--
@@ -243,12 +243,12 @@ FROM s S1 JOIN s S2 ON (S1.business_id = S2.business_id AND S1.user_id = S2.user
 WHERE S1.count < S2.count
 ;					
 
---update record_type
---set review_votes_type = 
---	(SELECT DISTINCT record_type
---	FROM t
---	LIMIT 1)
---;
+update record_type
+set review_votes_type = 
+	(SELECT DISTINCT record_type
+	FROM t
+	LIMIT 1)
+;
 
 INSERT INTO r_stars (business_id, user_id, stars, data, testo, funny, useful, cool)
 SELECT business_id, user_id, stars, data, testo,
@@ -290,7 +290,7 @@ DROP TABLE q
 --########################################################################################--
 -- Third part. 
 --########################################################################################--
-/* ---------------------------------------- per fare le prove
+
 CREATE temporary TABLE t (
 	record_type char(4),
 	user_id char(22),
@@ -454,4 +454,3 @@ drop function registered_on_f(
 	registered_on char(7)
 )
 ;
-*/ ---------------------------------------- per fare le prove

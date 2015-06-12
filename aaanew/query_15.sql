@@ -8,26 +8,31 @@
 */
 WITH
 	-- numero di recensioni per utente
-	c2 AS (SELECT DISTINCT R.user_id, COUNT(R.business_id) AS rev
-	      FROM R_stars R
-	      GROUP BY R.user_id),
-	-- numero di recensioni per utente in quelli meno recensiti
-	c3 AS (SELECT DISTINCT R.user_id, COUNT(R.business_id) AS revh
-	      FROM R_stars R
-	      WHERE R.business_id IN
-	      (
-		-- qua dobbiamo fare un check per vedere che prendiamo tutti quelli con la stessa recension count
-		SELECT business_id
-	      	FROM B_address
-	      	ORDER BY review_count ASC
-	      	LIMIT (SELECT (COUNT(*)/10) AS INTEGER FROM B_address)
-	      )
-	      GROUP BY R.user_id),
- AA AS (SELECT DISTINCT A.user_id, rev, revh
-FROM c2 A JOIN c3 B ON (A.user_id = B.user_id)
-WHERE B.revh >= 0.75 * A.rev)
-
-select count (*) from AA
+	rec_per_user AS (SELECT DISTINCT user_id, COUNT(business_id) AS revu
+	      			 FROM r_stars
+	                 GROUP BY user_id
+					 ),
+	-- percentili di recensioni per business							
+	percentile AS (SELECT a, max(review_count) AS max_rev
+				   FROM (
+	   					 SELECT review_count,
+	        			    ntile(10) OVER (ORDER BY review_count) AS a 
+	   					 FROM b_address
+	   					) AS tmp
+				   GROUP BY a
+				   ORDER BY a
+				   ),
+	-- contiamo quante recensioni ha fatto ogni utente per questi business con poche recensioni			
+	less_rev AS (SELECT DISTINCT user_id, COUNT(business_id) AS revh
+	      		 FROM r_stars
+	      		 WHERE business_id IN (
+									SELECT business_id
+	      							FROM b_address
+	      							WHERE review_count <= (SELECT max_rev FROM percentile WHERE a = 1)
+	      						)
+	      		 GROUP BY user_id)	
+	-- selezioniamo gli Hipster
+ 	SELECT DISTINCT A.user_id 
+	FROM rec_per_user A JOIN less_rev B ON (A.user_id = B.user_id)
+	WHERE B.revh >= 0.75 * A.revu
 ;
---808,001 ms
---297 rows
